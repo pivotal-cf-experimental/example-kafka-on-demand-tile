@@ -1,0 +1,27 @@
+---
+name: example-kafka-on-demand
+product_version: 0.1.1
+metadata_version: '1.8'
+stemcell_criteria:
+  os: ubuntu-trusty
+  version: '3215'
+releases:
+- name: on-demand-service-broker
+  file: on-demand-service-broker-0.1.1.tgz
+  version: '0.1.1'
+  md5: ba8685a3debfe53c4b44748c3c0c22bf
+  url: https://s3.amazonaws.com/cf-services-internal-builds/on-demand-service-broker/on-demand-service-broker-0.1.1.tgz
+
+- name: kafka-example-service-adapter-dev3
+  file: kafka-example-service-adapter-dev3-0+dev.3.tgz
+  version: '0+dev.3'
+  md5: 14707606adb84e79d3eb0a8c1e6e805a
+
+- name: kafka-service-dev3
+  file: kafka-service-dev3-0+dev.2.tgz
+  version: '0+dev.2'
+  md5: a820c6c1d6f259a5148be28affc17d4e
+
+provides_product_versions:
+- name: example-kafka-on-demand
+  version: 0.1.1

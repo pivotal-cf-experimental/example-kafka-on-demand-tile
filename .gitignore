@@ -1,0 +1,6 @@
+*.tgz
+*.pivotal
+*.pivotal.md5
+*.pivotal.yml
+content_migrations/*.yml
+metadata/*.yml

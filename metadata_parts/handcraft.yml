@@ -1,0 +1,103 @@
+---
+label: Kafka
+description: Kafka example service
+icon_image: AAAA
+minimum_version_for_upgrade: "0.1.0" # Why? What?
+rank: 50
+
+post_deploy_errands: []
+
+pre_delete_errands: []
+
+# hard code all the things
+form_types: []
+
+job_types:
+- name: broker
+  resource_label: The Broker
+  templates:
+  - name: broker
+    release: on-demand-service-broker
+  - name: syslog-configurator
+    release: on-demand-service-broker
+  - name: kafka-service-adapter
+    release: kafka-example-service-adapter-dev3
+  static_ip: 0
+  dynamic_ip: 1
+  max_in_flight: 1
+  single_az_only: true
+  instance_definition:
+    name: instances
+    type: integer
+    configurable: true
+    default: 1
+    constraints:
+      max: 1
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: true
+    default: 1024
+  - name: ephemeral_disk
+    type: integer
+    configurable: true
+    default: 2048
+  - name: persistent_disk
+    type: integer
+    configurable: true
+    default: 1024
+    constraints:
+      min: 1024
+  - name: cpu
+    type: integer
+    configurable: true
+    default: 1
+  property_blueprints: [] # hard code all the things!
+  manifest: |
+    broker:
+      port: 8080
+      username: opsman
+      password: tilestilestiles
+      bosh:
+        url: http://10.0.16.10:25555
+        director_uuid: NOT_REALLY_USED
+        authentication:
+          uaa:
+            url: https://10.0.16.10:8443
+            client_id: ops_manager
+            client_secret: b7759ed77d61265702e4
+      service_adapter:
+        path: /var/vcap/packages/kafka-service-adapter/bin/service-adapter
+      service_deployment:
+        releases:
+          - name: kafka-service-dev3
+            version: 0+dev.2
+            jobs: [kafka_broker, zookeeper_server]
+        stemcell:
+          os: ubuntu-trusty
+          version: 3215
+      service_catalog:
+        id: D94A086D-203D-4966-A6F1-60A9E2300F72
+        service_name: kafka-dev3
+        service_description: Kafka Service
+        bindable: true
+        plan_updatable: true
+        tags: [kafka]
+        plans:
+          - name: small
+            plan_id: 11789210-D743-4C65-9D38-C80B29F4D9C8
+            description: A Kafka deployment with a single instance of each job and persistent disk
+            instance_groups:
+              - name: kafka_broker
+                vm_type: t2.micro
+                instances: 1
+                persistent_disk: '10240'
+                networks: [kafka-service]
+              - name: zookeeper_server
+                vm_type: t2.micro
+                instances: 1
+                persistent_disk: '10240'
+                networks: [kafka-service]
+            properties:
+              auto_create_topics: true
+              default_replication_factor: 1
