@@ -17,9 +17,9 @@ job_types:
   resource_label: The Broker
   templates:
   - name: broker
-    release: on-demand-service-broker
+    release: on-demand-service-broker-dev3
   - name: syslog-configurator
-    release: on-demand-service-broker
+    release: on-demand-service-broker-dev3
   - name: kafka-service-adapter
     release: kafka-example-service-adapter-dev3
   static_ip: 0
@@ -59,7 +59,7 @@ job_types:
       username: opsman
       password: tilestilestiles
       bosh:
-        url: http://10.0.16.10:25555
+        url: https://10.0.16.10:25555
         director_uuid: NOT_REALLY_USED
         authentication:
           uaa:
@@ -93,11 +93,13 @@ job_types:
                 instances: 1
                 persistent_disk: '10240'
                 networks: [kafka-service]
+                azs: [433ed483579e69de6633]
               - name: zookeeper_server
                 vm_type: t2.micro
                 instances: 1
                 persistent_disk: '10240'
                 networks: [kafka-service]
+                azs: [433ed483579e69de6633]
             properties:
               auto_create_topics: true
               default_replication_factor: 1

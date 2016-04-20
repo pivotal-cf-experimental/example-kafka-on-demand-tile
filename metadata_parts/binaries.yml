@@ -6,11 +6,10 @@ stemcell_criteria:
   os: ubuntu-trusty
   version: '3215'
 releases:
-- name: on-demand-service-broker
-  file: on-demand-service-broker-0.1.1.tgz
-  version: '0.1.1'
-  md5: ba8685a3debfe53c4b44748c3c0c22bf
-  url: https://s3.amazonaws.com/cf-services-internal-builds/on-demand-service-broker/on-demand-service-broker-0.1.1.tgz
+- name: on-demand-service-broker-dev3
+  file: on-demand-service-broker-dev3-0+dev.2.tgz
+  version: '0+dev.2'
+  md5: 25dea6a2b5e33b1dcea6d01657078b90
 
 - name: kafka-example-service-adapter-dev3
   file: kafka-example-service-adapter-dev3-0+dev.3.tgz
