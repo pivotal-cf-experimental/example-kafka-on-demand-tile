@@ -17,11 +17,11 @@ job_types:
   resource_label: The Broker
   templates:
   - name: broker
-    release: on-demand-service-broker-dev3
+    release: on-demand-service-broker-dev1
   - name: syslog-configurator
-    release: on-demand-service-broker-dev3
+    release: on-demand-service-broker-dev1
   - name: kafka-service-adapter
-    release: kafka-example-service-adapter-dev3
+    release: kafka-example-service-adapter-dev1
   static_ip: 0
   dynamic_ip: 1
   max_in_flight: 1
@@ -65,12 +65,12 @@ job_types:
           uaa:
             url: https://10.0.16.10:8443
             client_id: ops_manager
-            client_secret: b7759ed77d61265702e4
+            client_secret: ebb8aa6095cb854676b3
       service_adapter:
         path: /var/vcap/packages/kafka-service-adapter/bin/service-adapter
       service_deployment:
         releases:
-          - name: kafka-service-dev3
+          - name: kafka-service-dev1
             version: 0+dev.2
             jobs: [kafka_broker, zookeeper_server]
         stemcell:
@@ -78,7 +78,7 @@ job_types:
           version: 3215
       service_catalog:
         id: D94A086D-203D-4966-A6F1-60A9E2300F72
-        service_name: kafka-dev3
+        service_name: kafka-dev1
         service_description: Kafka Service
         bindable: true
         plan_updatable: true
@@ -93,13 +93,13 @@ job_types:
                 instances: 1
                 persistent_disk: '10240'
                 networks: [kafka-service]
-                azs: [433ed483579e69de6633]
+                azs: [253f71d09a6367fa3065]
               - name: zookeeper_server
                 vm_type: t2.micro
                 instances: 1
                 persistent_disk: '10240'
                 networks: [kafka-service]
-                azs: [433ed483579e69de6633]
+                azs: [253f71d09a6367fa3065]
             properties:
               auto_create_topics: true
               default_replication_factor: 1

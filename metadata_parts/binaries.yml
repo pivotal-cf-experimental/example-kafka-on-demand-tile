@@ -6,20 +6,20 @@ stemcell_criteria:
   os: ubuntu-trusty
   version: '3215'
 releases:
-- name: on-demand-service-broker-dev3
-  file: on-demand-service-broker-dev3-0+dev.2.tgz
-  version: '0+dev.2'
-  md5: 25dea6a2b5e33b1dcea6d01657078b90
+- name: on-demand-service-broker-dev1
+  file: on-demand-service-broker-dev1-0+dev.7.tgz
+  version: '0+dev.7'
+  md5: 944c20843c43f08984f327a5b6dd4581
 
-- name: kafka-example-service-adapter-dev3
-  file: kafka-example-service-adapter-dev3-0+dev.3.tgz
+- name: kafka-example-service-adapter-dev1
+  file: kafka-example-service-adapter-dev1-0+dev.3.tgz
   version: '0+dev.3'
-  md5: 14707606adb84e79d3eb0a8c1e6e805a
+  md5: 288345736ccdf48682ee14e78a30253f
 
-- name: kafka-service-dev3
-  file: kafka-service-dev3-0+dev.2.tgz
+- name: kafka-service-dev1
+  file: kafka-service-dev1-0+dev.2.tgz
   version: '0+dev.2'
-  md5: a820c6c1d6f259a5148be28affc17d4e
+  md5: 548e79b0e1e4dbc4205195c6fb074a13
 
 provides_product_versions:
 - name: example-kafka-on-demand
