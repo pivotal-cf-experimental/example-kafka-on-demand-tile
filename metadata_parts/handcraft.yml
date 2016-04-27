@@ -9,8 +9,17 @@ post_deploy_errands: []
 
 pre_delete_errands: []
 
-# hard code all the things
-form_types: []
+form_types:
+- name: only-plan
+  label: The Only Plan
+  description: Properties for the Only Plan
+  property_inputs:
+  - reference: .broker.auto_create_topics
+    label: Auto-create topics
+    description: Create topics when not present
+  - reference: .broker.default_replication_factor
+    label: Default replication factor
+    description: The Kafka replication factor for a topic when not explicitly specified at topic creation time
 
 job_types:
 - name: broker
@@ -52,20 +61,29 @@ job_types:
     type: integer
     configurable: true
     default: 1
-  property_blueprints: [] # hard code all the things!
+  property_blueprints:
+  - name: broker_basic_auth
+    type: simple_credentials
+  - name: auto_create_topics
+    type: boolean
+    configurable: true
+    default: true
+  - name: default_replication_factor
+    type: integer
+    configurable: true
+    default: 1
   manifest: |
     broker:
       port: 8080
-      username: opsman
-      password: tilestilestiles
+      username: (( broker_basic_auth.identity ))
+      password: (( broker_basic_auth.password ))
       disable_ssl_cert_verification: true
       bosh:
-        url: https://10.0.16.10:25555
-        director_uuid: NOT_REALLY_USED
+        url: https://10.0.16.10:25555 # Need accessor
         authentication:
           uaa:
-            url: https://10.0.16.10:8443
-            client_id: ops_manager
+            url: https://10.0.16.10:8443 # Need accessor
+            client_id: ops_manager # Need accesor for these credentials: Probably impossible to do a cross-deployment link to bosh?
             client_secret: ebb8aa6095cb854676b3
       service_adapter:
         path: /var/vcap/packages/kafka-service-adapter/bin/service-adapter
@@ -85,13 +103,13 @@ job_types:
         plan_updatable: true
         tags: [kafka]
         plans:
-          - name: small
+          - name: only-plan
             plan_id: 11789210-D743-4C65-9D38-C80B29F4D9C8
-            description: A Kafka deployment with a single instance of each job and persistent disk
+            description: An example Kafka plan
             instance_groups:
               - name: kafka_broker
                 vm_type: t2.micro
-                instances: 1
+                instances: 3
                 persistent_disk: '10240'
                 networks: [kafka-service]
                 azs: [253f71d09a6367fa3065]
@@ -102,5 +120,5 @@ job_types:
                 networks: [kafka-service]
                 azs: [253f71d09a6367fa3065]
             properties:
-              auto_create_topics: true
-              default_replication_factor: 1
+              auto_create_topics: (( .broker.auto_create_topics.value ))
+              default_replication_factor: (( .broker.default_replication_factor.value ))
