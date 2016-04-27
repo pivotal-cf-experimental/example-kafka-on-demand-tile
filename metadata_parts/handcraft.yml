@@ -58,6 +58,7 @@ job_types:
       port: 8080
       username: opsman
       password: tilestilestiles
+      disable_ssl_cert_verification: true
       bosh:
         url: https://10.0.16.10:25555
         director_uuid: NOT_REALLY_USED
