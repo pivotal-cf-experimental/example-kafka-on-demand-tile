@@ -20,6 +20,12 @@ form_types:
   - reference: .broker.default_replication_factor
     label: Default replication factor
     description: The Kafka replication factor for a topic when not explicitly specified at topic creation time
+  - reference: .broker.vm_type
+    label: VM type
+    description: Type for Kafka VMs
+  - reference: .broker.disk_type
+    label: Disk type
+    description: Type for Kafka VM disks
 
 job_types:
 - name: broker
@@ -72,6 +78,12 @@ job_types:
     type: integer
     configurable: true
     default: 1
+  - name: vm_type
+    type: vm_type_dropdown
+    configurable: true
+  - name: disk_type
+    type: disk_type_dropdown
+    configurable: true
   manifest: |
     broker:
       port: 8080
@@ -79,10 +91,10 @@ job_types:
       password: (( broker_basic_auth.password ))
       disable_ssl_cert_verification: true
       bosh:
-        url: https://10.0.16.10:25555 # Need accessor
+        url: https://(( $director.deployment_ip )):25555   # e.g. https://10.0.16.10:25555
         authentication:
           uaa:
-            url: https://10.0.16.10:8443 # Need accessor
+            url: https://(( $director.deployment_ip )):8443   # e.g. https://10.0.16.10:8443
             client_id: ops_manager # Need accesor for these credentials: Probably impossible to do a cross-deployment link to bosh?
             client_secret: ebb8aa6095cb854676b3
       service_adapter:
@@ -108,15 +120,15 @@ job_types:
             description: An example Kafka plan
             instance_groups:
               - name: kafka_broker
-                vm_type: t2.micro
+                vm_type: (( .broker.vm_type.value ))
                 instances: 3
-                persistent_disk: '10240'
+                persistent_disk: (( .broker.disk_type.value ))
                 networks: [kafka-service]
                 azs: [253f71d09a6367fa3065]
               - name: zookeeper_server
-                vm_type: t2.micro
+                vm_type: (( .broker.vm_type.value ))
                 instances: 1
-                persistent_disk: '10240'
+                persistent_disk: (( .broker.disk_type.value ))
                 networks: [kafka-service]
                 azs: [253f71d09a6367fa3065]
             properties:
