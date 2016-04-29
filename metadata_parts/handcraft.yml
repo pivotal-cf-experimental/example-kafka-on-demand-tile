@@ -165,13 +165,13 @@ job_types:
             instances: (( .broker.kafka_broker_instances.value ))
             persistent_disk: (( .broker.kafka_broker_disk_type.value ))
             networks: [kafka-service]
-            azs: [253f71d09a6367fa3065]
+            azs: [129011bf26760114ed33]
           - name: zookeeper_server
             vm_type: (( .broker.zookeeper_server_vm_type.value ))
             instances: (( .broker.zookeeper_server_instances.value ))
             persistent_disk: (( .broker.zookeeper_server_disk_type.value ))
             networks: [kafka-service]
-            azs: [253f71d09a6367fa3065]
+            azs: [129011bf26760114ed33]
           properties:
             auto_create_topics: (( .broker.auto_create_topics.value ))
             default_replication_factor: (( .broker.default_replication_factor.value ))
