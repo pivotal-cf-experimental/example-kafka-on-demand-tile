@@ -4,28 +4,47 @@ description: Kafka example service
 icon_image: AAAA
 minimum_version_for_upgrade: "0.1.0" # Why? What?
 rank: 50
+service_broker: true
 
 post_deploy_errands: []
 
 pre_delete_errands: []
 
 form_types:
-- name: only-plan
-  label: The Only Plan
-  description: Properties for the Only Plan
+- name: plans_form
+  label: On-Demand Plans
+  description: Kafka-ODB plans
   property_inputs:
+  - reference: .broker.plan_name
+    label: Plan name
+    description: Name of the only plan.
+  - reference: .broker.plan_description
+    label: Plan description
+    description: Description of the only plan
+  - reference: .broker.kafka_broker_instances
+    label: Kafka instances
+    description: No. of Kafka instances
+  - reference: .broker.kafka_broker_vm_type
+    label: Kafka VM type
+    description: Type for Kafka VM
+  - reference: .broker.kafka_broker_disk_type
+    label: Kafka Disk type
+    description: Type for Kafka disk
+  - reference: .broker.zookeeper_server_instances
+    label: Zookeeper server instances
+    description: No. of Zookeeper instances
+  - reference: .broker.zookeeper_server_vm_type
+    label: Zookeeper VM type
+    description: Type for Zookeeper VMs
+  - reference: .broker.zookeeper_server_disk_type
+    label: Zookeeper disk type
+    description: Type for Zookeeper disks
   - reference: .broker.auto_create_topics
     label: Auto-create topics
     description: Create topics when not present
   - reference: .broker.default_replication_factor
     label: Default replication factor
     description: The Kafka replication factor for a topic when not explicitly specified at topic creation time
-  - reference: .broker.vm_type
-    label: VM type
-    description: Type for Kafka VMs
-  - reference: .broker.disk_type
-    label: Disk type
-    description: Type for Kafka VM disks
 
 job_types:
 - name: broker
@@ -70,6 +89,34 @@ job_types:
   property_blueprints:
   - name: broker_basic_auth
     type: simple_credentials
+  - name: plan_name
+    type: string
+    configurable: true
+  - name: plan_id
+    type: uuid
+  - name: plan_description
+    type: string
+    configurable: true
+  - name: kafka_broker_instances
+    type: integer
+    configurable: true
+    default: 1
+  - name: kafka_broker_vm_type
+    type: vm_type_dropdown
+    configurable: true
+  - name: kafka_broker_disk_type
+    type: disk_type_dropdown
+    configurable: true
+  - name: zookeeper_server_instances
+    type: integer
+    configurable: true
+    default: 1
+  - name: zookeeper_server_vm_type
+    type: vm_type_dropdown
+    configurable: true
+  - name: zookeeper_server_disk_type
+    type: disk_type_dropdown
+    configurable: true
   - name: auto_create_topics
     type: boolean
     configurable: true
@@ -78,12 +125,6 @@ job_types:
     type: integer
     configurable: true
     default: 1
-  - name: vm_type
-    type: vm_type_dropdown
-    configurable: true
-  - name: disk_type
-    type: disk_type_dropdown
-    configurable: true
   manifest: |
     broker:
       port: 8080
@@ -95,15 +136,15 @@ job_types:
         authentication:
           uaa:
             url: https://(( $director.deployment_ip )):8443   # e.g. https://10.0.16.10:8443
-            client_id: ops_manager # Need accesor for these credentials: Probably impossible to do a cross-deployment link to bosh?
-            client_secret: ebb8aa6095cb854676b3
+            client_id: (( $self.uaa_client_name ))
+            client_secret: (( $self.uaa_client_secret ))
       service_adapter:
         path: /var/vcap/packages/kafka-service-adapter/bin/service-adapter
       service_deployment:
         releases:
-          - name: kafka-service-dev1
-            version: 0+dev.2
-            jobs: [kafka_broker, zookeeper_server]
+        - name: kafka-service-dev1
+          version: 0+dev.2
+          jobs: [kafka_broker, zookeeper_server]
         stemcell:
           os: ubuntu-trusty
           version: 3215
@@ -115,22 +156,22 @@ job_types:
         plan_updatable: true
         tags: [kafka]
         plans:
-          - name: only-plan
-            plan_id: 11789210-D743-4C65-9D38-C80B29F4D9C8
-            description: An example Kafka plan
-            instance_groups:
-              - name: kafka_broker
-                vm_type: (( .broker.vm_type.value ))
-                instances: 3
-                persistent_disk: (( .broker.disk_type.value ))
-                networks: [kafka-service]
-                azs: [253f71d09a6367fa3065]
-              - name: zookeeper_server
-                vm_type: (( .broker.vm_type.value ))
-                instances: 1
-                persistent_disk: (( .broker.disk_type.value ))
-                networks: [kafka-service]
-                azs: [253f71d09a6367fa3065]
-            properties:
-              auto_create_topics: (( .broker.auto_create_topics.value ))
-              default_replication_factor: (( .broker.default_replication_factor.value ))
+        - name: (( .broker.plan_name.value ))
+          plan_id: (( .broker.plan_id.value ))
+          description: (( .broker.plan_description.value ))
+          instance_groups:
+          - name: kafka_broker
+            vm_type: (( .broker.kafka_broker_vm_type.value ))
+            instances: (( .broker.kafka_broker_instances.value ))
+            persistent_disk: (( .broker.kafka_broker_disk_type.value ))
+            networks: [kafka-service]
+            azs: [253f71d09a6367fa3065]
+          - name: zookeeper_server
+            vm_type: (( .broker.zookeeper_server_vm_type.value ))
+            instances: (( .broker.zookeeper_server_instances.value ))
+            persistent_disk: (( .broker.zookeeper_server_disk_type.value ))
+            networks: [kafka-service]
+            azs: [253f71d09a6367fa3065]
+          properties:
+            auto_create_topics: (( .broker.auto_create_topics.value ))
+            default_replication_factor: (( .broker.default_replication_factor.value ))
