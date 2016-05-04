@@ -21,6 +21,12 @@ releases:
   version: '0+dev.2'
   md5: 548e79b0e1e4dbc4205195c6fb074a13
 
+- name: cf-kafka
+  file: cf-kafka-38.tgz
+  version: '38'
+  md5: b34eb42116b45dc268e83eff1859796b
+  url: https://s3.amazonaws.com/cf-services-internal-builds/kafka/cf-kafka-38.tgz
+
 provides_product_versions:
 - name: example-kafka-on-demand
   version: 0.1.1

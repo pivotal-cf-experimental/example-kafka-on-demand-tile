@@ -4,11 +4,14 @@ description: Kafka example service
 icon_image: AAAA
 minimum_version_for_upgrade: "0.1.0" # Why? What?
 rank: 50
-service_broker: true
+# service_broker: true   # To avoid bosh director redeployments
 
-post_deploy_errands: []
+post_deploy_errands:
+- name: push_and_register_service_broker
+- name: smoke_tests
 
-pre_delete_errands: []
+pre_delete_errands:
+- name: delete_and_unregister_service_broker
 
 form_types:
 - name: plans_form
@@ -45,10 +48,340 @@ form_types:
   - reference: .broker.default_replication_factor
     label: Default replication factor
     description: The Kafka replication factor for a topic when not explicitly specified at topic creation time
+- name: syslog
+  label: Syslog (Classic)
+  description: "Forwards syslog messages via UDP to a syslog server"
+  property_inputs:
+  - reference: .properties.syslog_address
+    label: Syslog address
+  - reference: .properties.syslog_port
+    label: Syslog port
+
+property_blueprints:
+- name: syslog_address
+  type: network_address
+  configurable: true
+  optional: true
+- name: syslog_port
+  type: port
+  configurable: true
+  optional: true
 
 job_types:
+- name: zookeeper_node
+  resource_label: ZooKeeper Node
+  templates:
+  - name: zookeeper_node
+    release: cf-kafka
+  - name: syslog-configurator
+    release: cf-kafka
+
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: true
+    default: 4_096
+    constraints:
+      min: 4_096
+
+  - name: ephemeral_disk
+    type: integer
+    configurable: true
+    default: 4_096
+    constraints:
+      min: 4_096
+
+  - name: persistent_disk
+    type: integer
+    configurable: true
+    default: 4_096
+    constraints:
+      min: 4_096
+
+  - name: cpu
+    type: integer
+    configurable: true
+    default: 1
+    constraints:
+      min: 1
+
+  static_ip: 1
+  dynamic_ip: 0
+  max_in_flight: 1
+
+  instance_definition:
+    name: instances
+    type: integer
+    configurable: false
+    default: 3
+    constraints:
+      may_only_increase: true
+
+  property_blueprints:
+  - name: vm_credentials
+    type: salted_credentials
+    default:
+      identity: vcap
+
+  manifest: |
+    networks:
+      apps: default
+    syslog_aggregator:
+      address: (( .properties.syslog_address.value ))
+      port: (( .properties.syslog_port.value ))
+    zookeeper:
+      machines: (( .zookeeper_node.ips ))
+
+- name: kafka_broker
+  resource_label: Kafka Node
+  templates:
+  - name: kafka_broker
+    release: cf-kafka
+  - name: syslog-configurator
+    release: cf-kafka
+
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: true
+    default: 4_096
+    constraints:
+      min: 4_096
+
+  - name: ephemeral_disk
+    type: integer
+    configurable: true
+    default: 4_096
+    constraints:
+      min: 4_096
+
+  - name: persistent_disk
+    type: integer
+    configurable: true
+    default: 32_768
+    constraints:
+      min: 4_096
+
+  - name: cpu
+    type: integer
+    configurable: true
+    default: 2
+    constraints:
+      min: 2
+
+  static_ip: 1
+  dynamic_ip: 0
+  max_in_flight: 1
+
+  instance_definition:
+    name: instances
+    type: integer
+    configurable: false
+    default: 5
+    constraints:
+      may_only_increase: true
+
+  property_blueprints:
+  - name: vm_credentials
+    type: salted_credentials
+    default:
+      identity: vcap
+
+  manifest: |
+    networks:
+      apps: default
+    kafka_broker:
+      machines: (( .kafka_broker.ips ))
+    syslog_aggregator:
+      address: (( .properties.syslog_address.value ))
+      port: (( .properties.syslog_port.value ))
+    zookeeper:
+      machines: (( .zookeeper_node.ips ))
+
+- name: push_and_register_service_broker
+  resource_label: Broker Registrar
+  templates:
+  - name: push_and_register_service_broker
+    release: cf-kafka
+  errand: true
+
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: false
+    default: 1_024
+    constraints:
+      min: 1_024
+
+  - name: ephemeral_disk
+    type: integer
+    configurable: false
+    default: 2_048
+    constraints:
+      min: 1_024
+
+  - name: persistent_disk
+    type: integer
+    configurable: false
+    default: 0
+
+  - name: cpu
+    type: integer
+    configurable: false
+    default: 1
+    constraints:
+      min: 1
+
+  static_ip: 0
+  dynamic_ip: 1
+  max_in_flight: 1
+
+  instance_definition:
+    name: instances
+    type: integer
+    default: 1
+
+  property_blueprints:
+  - name: vm_credentials
+    type: salted_credentials
+    default:
+      identity: vcap
+
+  manifest: |
+    kafka_service_broker:
+      kafka:
+        port: 9092
+        node_ips: (( .kafka_broker.ips ))
+      zookeeper:
+        port: 2181
+        node_ips: (( .zookeeper_node.ips ))
+    ssl:
+      skip_cert_verify: (( ..cf.ha_proxy.skip_cert_verify.value ))
+    cf:
+      api_url: (( $runtime.system_api_url ))
+      domain: (( $runtime.apps_domain ))
+      admin_username: (( ..cf.uaa.admin_credentials.identity ))
+      admin_password: (( ..cf.uaa.admin_credentials.password ))
+
+- name: smoke_tests
+  resource_label: Smoke Tests
+  templates:
+  - name: smoke_tests
+    release: cf-kafka
+  errand: true
+
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: false
+    default: 1_024
+    constraints:
+      min: 1_024
+
+  - name: ephemeral_disk
+    type: integer
+    configurable: false
+    default: 2_048
+    constraints:
+      min: 1_024
+
+  - name: persistent_disk
+    type: integer
+    configurable: false
+    default: 0
+
+  - name: cpu
+    type: integer
+    configurable: false
+    default: 1
+    constraints:
+      min: 1
+
+  static_ip: 0
+  dynamic_ip: 1
+  max_in_flight: 1
+
+  instance_definition:
+    name: instances
+    type: integer
+    default: 1
+
+  property_blueprints:
+  - name: vm_credentials
+    type: salted_credentials
+    default:
+      identity: vcap
+
+  manifest: |
+    ssl:
+      skip_cert_verify: (( ..cf.ha_proxy.skip_cert_verify.value ))
+    cf:
+      api_url: (( $runtime.system_api_url ))
+      domain: (( $runtime.apps_domain ))
+      admin_username: (( ..cf.uaa.admin_credentials.identity ))
+      admin_password: (( ..cf.uaa.admin_credentials.password ))
+
+- name: delete_and_unregister_service_broker
+  resource_label: Broker Deregistrar
+  templates:
+  - name: delete_and_unregister_service_broker
+    release: cf-kafka
+  release: cf-kafka
+  errand: true
+
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: false
+    default: 1_024
+    constraints:
+      min: 1_024
+
+  - name: ephemeral_disk
+    type: integer
+    configurable: false
+    default: 2_048
+    constraints:
+      min: 1_024
+
+  - name: persistent_disk
+    type: integer
+    configurable: false
+    default: 0
+
+  - name: cpu
+    type: integer
+    configurable: false
+    default: 1
+    constraints:
+      min: 1
+
+  static_ip: 0
+  dynamic_ip: 1
+  max_in_flight: 1
+
+  instance_definition:
+    name: instances
+    type: integer
+    default: 1
+
+  property_blueprints:
+  - name: vm_credentials
+    type: salted_credentials
+    default:
+      identity: vcap
+
+  manifest: |
+    ssl:
+      skip_cert_verify: (( ..cf.ha_proxy.skip_cert_verify.value ))
+    cf:
+      api_url: (( $runtime.system_api_url ))
+      domain: (( $runtime.apps_domain ))
+      admin_username: (( ..cf.uaa.admin_credentials.identity ))
+      admin_password: (( ..cf.uaa.admin_credentials.password ))
+
 - name: broker
-  resource_label: The Broker
+  resource_label: Kafka-ODB
   templates:
   - name: broker
     release: on-demand-service-broker-dev1
@@ -132,12 +465,12 @@ job_types:
       password: (( broker_basic_auth.password ))
       disable_ssl_cert_verification: true
       bosh:
-        url: https://(( $director.deployment_ip )):25555   # e.g. https://10.0.16.10:25555
+        url: https://(( $director.deployment_ip )):25555
         authentication:
           uaa:
-            url: https://(( $director.deployment_ip )):8443   # e.g. https://10.0.16.10:8443
-            client_id: (( $self.uaa_client_name ))
-            client_secret: (( $self.uaa_client_secret ))
+            url: https://(( $director.deployment_ip )):8443
+            client_id: ops_manager  # Hard-coding to avoid service_broker: true and bosh director redeployments
+            client_secret: fc426eba901826e48ef8  # Hard-coding to avoid service_broker: true and bosh director redeployments
       service_adapter:
         path: /var/vcap/packages/kafka-service-adapter/bin/service-adapter
       service_deployment:
@@ -164,14 +497,330 @@ job_types:
             vm_type: (( .broker.kafka_broker_vm_type.value ))
             instances: (( .broker.kafka_broker_instances.value ))
             persistent_disk: (( .broker.kafka_broker_disk_type.value ))
-            networks: [(( $self.service_network ))]
+            networks: [kafka-service]  # Hard-coding to avoid service_broker: true and bosh director redeployments
             azs: [698bccdbed8f006a2619]
           - name: zookeeper_server
             vm_type: (( .broker.zookeeper_server_vm_type.value ))
             instances: (( .broker.zookeeper_server_instances.value ))
             persistent_disk: (( .broker.zookeeper_server_disk_type.value ))
-            networks: [(( $self.service_network ))]
+            networks: [kafka-service]  # Hard-coding to avoid service_broker: true and bosh director redeployments
             azs: [698bccdbed8f006a2619]
           properties:
             auto_create_topics: (( .broker.auto_create_topics.value ))
             default_replication_factor: (( .broker.default_replication_factor.value ))
+
+- name: zookeeper_node
+  resource_label: ZooKeeper Node
+  single_az_only: false
+  templates:
+  - name: zookeeper_node
+    release: cf-kafka
+  - name: syslog-configurator
+    release: cf-kafka
+
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: true
+    default: 4_096
+    constraints:
+      min: 4_096
+
+  - name: ephemeral_disk
+    type: integer
+    configurable: true
+    default: 4_096
+    constraints:
+      min: 4_096
+
+  - name: persistent_disk
+    type: integer
+    configurable: true
+    default: 4_096
+    constraints:
+      min: 4_096
+
+  - name: cpu
+    type: integer
+    configurable: true
+    default: 1
+    constraints:
+      min: 1
+
+  static_ip: 1
+  dynamic_ip: 0
+  max_in_flight: 1
+
+  instance_definition:
+    name: instances
+    type: integer
+    configurable: false
+    default: 3
+    constraints:
+      may_only_increase: true
+
+  property_blueprints:
+  - name: vm_credentials
+    type: salted_credentials
+    default:
+      identity: vcap
+
+  manifest: |
+    networks:
+      apps: default
+    syslog_aggregator:
+      address: (( .properties.syslog_address.value ))
+      port: (( .properties.syslog_port.value ))
+    zookeeper:
+      machines: (( .zookeeper_node.ips ))
+
+- name: kafka_broker
+  resource_label: Kafka Node
+  single_az_only: false
+  templates:
+  - name: kafka_broker
+    release: cf-kafka
+  - name: syslog-configurator
+    release: cf-kafka
+
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: true
+    default: 4_096
+    constraints:
+      min: 4_096
+
+  - name: ephemeral_disk
+    type: integer
+    configurable: true
+    default: 4_096
+    constraints:
+      min: 4_096
+
+  - name: persistent_disk
+    type: integer
+    configurable: true
+    default: 32_768
+    constraints:
+      min: 4_096
+
+  - name: cpu
+    type: integer
+    configurable: true
+    default: 2
+    constraints:
+      min: 2
+
+  static_ip: 1
+  dynamic_ip: 0
+  max_in_flight: 1
+
+  instance_definition:
+    name: instances
+    type: integer
+    configurable: false
+    default: 5
+    constraints:
+      may_only_increase: true
+
+  property_blueprints:
+  - name: vm_credentials
+    type: salted_credentials
+    default:
+      identity: vcap
+
+  manifest: |
+    networks:
+      apps: default
+    kafka_broker:
+      machines: (( .kafka_broker.ips ))
+    syslog_aggregator:
+      address: (( .properties.syslog_address.value ))
+      port: (( .properties.syslog_port.value ))
+    zookeeper:
+      machines: (( .zookeeper_node.ips ))
+
+- name: push_and_register_service_broker
+  resource_label: Broker Registrar
+  single_az_only: true
+  templates:
+  - name: push_and_register_service_broker
+    release: cf-kafka
+  errand: true
+
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: false
+    default: 1_024
+    constraints:
+      min: 1_024
+
+  - name: ephemeral_disk
+    type: integer
+    configurable: false
+    default: 2_048
+    constraints:
+      min: 1_024
+
+  - name: persistent_disk
+    type: integer
+    configurable: false
+    default: 0
+
+  - name: cpu
+    type: integer
+    configurable: false
+    default: 1
+    constraints:
+      min: 1
+
+  static_ip: 0
+  dynamic_ip: 1
+  max_in_flight: 1
+
+  instance_definition:
+    name: instances
+    type: integer
+    default: 1
+
+  property_blueprints:
+  - name: vm_credentials
+    type: salted_credentials
+    default:
+      identity: vcap
+
+  manifest: |
+    kafka_service_broker:
+      kafka:
+        port: 9092
+        node_ips: (( .kafka_broker.ips ))
+      zookeeper:
+        port: 2181
+        node_ips: (( .zookeeper_node.ips ))
+    ssl:
+      skip_cert_verify: (( ..cf.ha_proxy.skip_cert_verify.value ))
+    cf:
+      api_url: (( $runtime.system_api_url ))
+      domain: (( $runtime.apps_domain ))
+      admin_username: (( ..cf.uaa.admin_credentials.identity ))
+      admin_password: (( ..cf.uaa.admin_credentials.password ))
+
+- name: smoke_tests
+  resource_label: Smoke Tests
+  single_az_only: true
+  templates:
+  - name: smoke_tests
+    release: cf-kafka
+  errand: true
+
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: false
+    default: 1_024
+    constraints:
+      min: 1_024
+
+  - name: ephemeral_disk
+    type: integer
+    configurable: false
+    default: 2_048
+    constraints:
+      min: 1_024
+
+  - name: persistent_disk
+    type: integer
+    configurable: false
+    default: 0
+
+  - name: cpu
+    type: integer
+    configurable: false
+    default: 1
+    constraints:
+      min: 1
+
+  static_ip: 0
+  dynamic_ip: 1
+  max_in_flight: 1
+
+  instance_definition:
+    name: instances
+    type: integer
+    default: 1
+
+  property_blueprints:
+  - name: vm_credentials
+    type: salted_credentials
+    default:
+      identity: vcap
+
+  manifest: |
+    ssl:
+      skip_cert_verify: (( ..cf.ha_proxy.skip_cert_verify.value ))
+    cf:
+      api_url: (( $runtime.system_api_url ))
+      domain: (( $runtime.apps_domain ))
+      admin_username: (( ..cf.uaa.admin_credentials.identity ))
+      admin_password: (( ..cf.uaa.admin_credentials.password ))
+
+- name: delete_and_unregister_service_broker
+  resource_label: Broker Deregistrar
+  single_az_only: true
+  templates:
+  - name: delete_and_unregister_service_broker
+    release: cf-kafka
+  errand: true
+
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: false
+    default: 1_024
+    constraints:
+      min: 1_024
+
+  - name: ephemeral_disk
+    type: integer
+    configurable: false
+    default: 2_048
+    constraints:
+      min: 1_024
+
+  - name: persistent_disk
+    type: integer
+    configurable: false
+    default: 0
+
+  - name: cpu
+    type: integer
+    configurable: false
+    default: 1
+    constraints:
+      min: 1
+
+  static_ip: 0
+  dynamic_ip: 1
+  max_in_flight: 1
+
+  instance_definition:
+    name: instances
+    type: integer
+    default: 1
+
+  property_blueprints:
+  - name: vm_credentials
+    type: salted_credentials
+    default:
+      identity: vcap
+
+  manifest: |
+    ssl:
+      skip_cert_verify: (( ..cf.ha_proxy.skip_cert_verify.value ))
+    cf:
+      api_url: (( $runtime.system_api_url ))
+      domain: (( $runtime.apps_domain ))
+      admin_username: (( ..cf.uaa.admin_credentials.identity ))
+      admin_password: (( ..cf.uaa.admin_credentials.password ))
