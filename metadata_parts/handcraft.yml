@@ -320,7 +320,7 @@ job_types:
 
   manifest: |
     networks:
-      apps: default
+      apps: pcf-managed
     kafka_broker:
       machines: (( .kafka_broker.ips ))
     syslog_aggregator:
