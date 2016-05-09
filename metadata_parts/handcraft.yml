@@ -9,9 +9,12 @@ rank: 50
 post_deploy_errands:
 - name: push_and_register_service_broker
 - name: smoke_tests
+- name: register_on_demand_service_broker
 
 pre_delete_errands:
 - name: delete_and_unregister_service_broker
+- name: delete_subdeployments_on_demand_service_broker
+- name: unregister_on_demand_service_broker
 
 form_types:
 - name: plans_form
@@ -66,6 +69,8 @@ property_blueprints:
   type: port
   configurable: true
   optional: true
+- name: broker_basic_auth
+  type: simple_credentials
 
 job_types:
 - name: broker
@@ -108,8 +113,6 @@ job_types:
     configurable: true
     default: 1
   property_blueprints:
-  - name: broker_basic_auth
-    type: simple_credentials
   - name: plan_name
     type: string
     configurable: true
@@ -149,8 +152,8 @@ job_types:
   manifest: |
     broker:
       port: 8080
-      username: (( broker_basic_auth.identity ))
-      password: (( broker_basic_auth.password ))
+      username: (( .properties.broker_basic_auth.identity ))
+      password: (( .properties.broker_basic_auth.password ))
       disable_ssl_cert_verification: true
       bosh:
         url: https://(( $director.deployment_ip )):25555
@@ -330,7 +333,7 @@ job_types:
       machines: (( .zookeeper_node.ips ))
 
 - name: push_and_register_service_broker
-  resource_label: Broker Registrar
+  resource_label: Legacy Broker Registrar
   single_az_only: true
   templates:
   - name: push_and_register_service_broker
@@ -396,7 +399,7 @@ job_types:
       admin_password: (( ..cf.uaa.admin_credentials.password ))
 
 - name: smoke_tests
-  resource_label: Smoke Tests
+  resource_label: Legacy Broker Smoke Tests
   single_az_only: true
   templates:
   - name: smoke_tests
@@ -454,8 +457,82 @@ job_types:
       admin_username: (( ..cf.uaa.admin_credentials.identity ))
       admin_password: (( ..cf.uaa.admin_credentials.password ))
 
+- name: register_on_demand_service_broker
+  resource_label: On Demand Service Broker Registrar
+  single_az_only: true
+  templates:
+  - name: register-broker
+    release: on-demand-service-broker-dev1
+  errand: true
+
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: false
+    default: 1_024
+    constraints:
+      min: 1_024
+
+  - name: ephemeral_disk
+    type: integer
+    configurable: false
+    default: 2_048
+    constraints:
+      min: 1_024
+
+  - name: persistent_disk
+    type: integer
+    configurable: false
+    default: 0
+
+  - name: cpu
+    type: integer
+    configurable: false
+    default: 1
+    constraints:
+      min: 1
+
+  static_ip: 0
+  dynamic_ip: 1
+  max_in_flight: 1
+
+  instance_definition:
+    name: instances
+    type: integer
+    default: 1
+
+  property_blueprints:
+  - name: vm_credentials
+    type: salted_credentials
+    default:
+      identity: vcap
+
+  manifest: |
+    broker:
+      name: kafka-odb
+      port: 8080
+      username: (( .properties.broker_basic_auth.identity ))
+      password: (( .properties.broker_basic_auth.password ))
+      disable_ssl_cert_verification: true
+      bosh:
+        url: https://(( $director.deployment_ip )):25555
+        authentication:
+          uaa:
+            url: https://(( $director.deployment_ip )):8443
+            client_id: ops_manager  # Hard-coding to avoid service_broker: true and bosh director redeployments
+            client_secret: fc426eba901826e48ef8  # Hard-coding to avoid service_broker: true and bosh director redeployments
+      service_catalog:
+        id: D94A086D-203D-4966-A6F1-60A9E2300F72
+        service_name: kafka-dev1
+        service_description: Kafka Service
+    cf:
+      api_url: (( $runtime.system_api_url ))
+      domain: (( $runtime.apps_domain ))
+      admin_username: (( ..cf.uaa.admin_credentials.identity ))
+      admin_password: (( ..cf.uaa.admin_credentials.password ))
+
 - name: delete_and_unregister_service_broker
-  resource_label: Broker Deregistrar
+  resource_label: Legacy Broker Deregistrar
   single_az_only: true
   templates:
   - name: delete_and_unregister_service_broker
@@ -505,6 +582,129 @@ job_types:
       identity: vcap
 
   manifest: |
+    ssl:
+      skip_cert_verify: (( ..cf.ha_proxy.skip_cert_verify.value ))
+    cf:
+      api_url: (( $runtime.system_api_url ))
+      domain: (( $runtime.apps_domain ))
+      admin_username: (( ..cf.uaa.admin_credentials.identity ))
+      admin_password: (( ..cf.uaa.admin_credentials.password ))
+
+
+- name: unregister_on_demand_service_broker
+  resource_label: On Demand Service Broker Deregistrar
+  single_az_only: true
+  templates:
+  - name: deregister-broker
+    release: on-demand-service-broker-dev1
+  errand: true
+
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: false
+    default: 1_024
+    constraints:
+      min: 1_024
+
+  - name: ephemeral_disk
+    type: integer
+    configurable: false
+    default: 2_048
+    constraints:
+      min: 1_024
+
+  - name: persistent_disk
+    type: integer
+    configurable: false
+    default: 0
+
+  - name: cpu
+    type: integer
+    configurable: false
+    default: 1
+    constraints:
+      min: 1
+
+  static_ip: 0
+  dynamic_ip: 1
+  max_in_flight: 1
+
+  instance_definition:
+    name: instances
+    type: integer
+    default: 1
+
+  property_blueprints:
+  - name: vm_credentials
+    type: salted_credentials
+    default:
+      identity: vcap
+
+  manifest: |
+    broker:
+      name: kafka-odb
+    ssl:
+      skip_cert_verify: (( ..cf.ha_proxy.skip_cert_verify.value ))
+    cf:
+      api_url: (( $runtime.system_api_url ))
+      domain: (( $runtime.apps_domain ))
+      admin_username: (( ..cf.uaa.admin_credentials.identity ))
+      admin_password: (( ..cf.uaa.admin_credentials.password ))
+- name:  delete_subdeployments_on_demand_service_broker
+  resource_label: Delete all instances of on Demand Service Broker
+  single_az_only: true
+  templates:
+  - name: delete-sub-deployments
+    release: on-demand-service-broker-dev1
+  errand: true
+
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: false
+    default: 1_024
+    constraints:
+      min: 1_024
+
+  - name: ephemeral_disk
+    type: integer
+    configurable: false
+    default: 2_048
+    constraints:
+      min: 1_024
+
+  - name: persistent_disk
+    type: integer
+    configurable: false
+    default: 0
+
+  - name: cpu
+    type: integer
+    configurable: false
+    default: 1
+    constraints:
+      min: 1
+
+  static_ip: 0
+  dynamic_ip: 1
+  max_in_flight: 1
+
+  instance_definition:
+    name: instances
+    type: integer
+    default: 1
+
+  property_blueprints:
+  - name: vm_credentials
+    type: salted_credentials
+    default:
+      identity: vcap
+
+  manifest: |
+    broker:
+      service_catalog:
+        id: D94A086D-203D-4966-A6F1-60A9E2300F72
     ssl:
       skip_cert_verify: (( ..cf.ha_proxy.skip_cert_verify.value ))
     cf:
