@@ -176,7 +176,7 @@ job_types:
           version: 3215
       service_catalog:
         id: D94A086D-203D-4966-A6F1-60A9E2300F72
-        service_name: kafka-dev1
+        service_name: odb-kafka
         service_description: Kafka Service
         bindable: true
         plan_updatable: true
@@ -525,7 +525,7 @@ job_types:
             client_secret: (( $self.uaa_client_secret ))
       service_catalog:
         id: D94A086D-203D-4966-A6F1-60A9E2300F72
-        service_name: kafka-dev1
+        service_name: odb-kafka
         service_description: Kafka Service
     cf:
       api_url: (( $runtime.system_api_url ))
