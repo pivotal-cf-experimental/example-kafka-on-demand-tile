@@ -4,7 +4,9 @@ description: Kafka example service
 icon_image: AAAA
 minimum_version_for_upgrade: "0.1.0" # Why? What?
 rank: 50
-# service_broker: true   # To avoid bosh director redeployments
+# service_broker: true can be commented out to avoid bosh director redeployments on tile installation/deletion.
+# In that case make sure to hardcode everything that comes from $self below.
+service_broker: true
 
 post_deploy_errands:
 - name: push_and_register_service_broker
@@ -160,8 +162,8 @@ job_types:
         authentication:
           uaa:
             url: https://(( $director.deployment_ip )):8443
-            client_id: ops_manager  # Hard-coding to avoid service_broker: true and bosh director redeployments
-            client_secret: fc426eba901826e48ef8  # Hard-coding to avoid service_broker: true and bosh director redeployments
+            client_id: (( $self.uaa_client_name ))
+            client_secret: (( $self.uaa_client_secret ))
       service_adapter:
         path: /var/vcap/packages/kafka-service-adapter/bin/service-adapter
       service_deployment:
@@ -188,13 +190,13 @@ job_types:
             vm_type: (( .broker.kafka_broker_vm_type.value ))
             instances: (( .broker.kafka_broker_instances.value ))
             persistent_disk: (( .broker.kafka_broker_disk_type.value ))
-            networks: [kafka-service]  # Hard-coding to avoid service_broker: true and bosh director redeployments
+            networks: [(( $self.service_network ))]
             azs: [698bccdbed8f006a2619]
           - name: zookeeper_server
             vm_type: (( .broker.zookeeper_server_vm_type.value ))
             instances: (( .broker.zookeeper_server_instances.value ))
             persistent_disk: (( .broker.zookeeper_server_disk_type.value ))
-            networks: [kafka-service]  # Hard-coding to avoid service_broker: true and bosh director redeployments
+            networks: [(( $self.service_network ))]
             azs: [698bccdbed8f006a2619]
           properties:
             auto_create_topics: (( .broker.auto_create_topics.value ))
@@ -519,8 +521,8 @@ job_types:
         authentication:
           uaa:
             url: https://(( $director.deployment_ip )):8443
-            client_id: ops_manager  # Hard-coding to avoid service_broker: true and bosh director redeployments
-            client_secret: fc426eba901826e48ef8  # Hard-coding to avoid service_broker: true and bosh director redeployments
+            client_id: (( $self.uaa_client_name ))
+            client_secret: (( $self.uaa_client_secret ))
       service_catalog:
         id: D94A086D-203D-4966-A6F1-60A9E2300F72
         service_name: kafka-dev1
