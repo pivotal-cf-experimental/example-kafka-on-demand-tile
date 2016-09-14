@@ -1,0 +1,428 @@
+---
+label: Kafka
+description: Kafka example service
+icon_image: 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
+
+minimum_version_for_upgrade: 0.9.0
+rank: 50
+
+# service_broker: true can be commented out to avoid bosh director redeployments on tile installation/deletion.
+# In that case make sure to hardcode everything that comes from $self below.
+service_broker: true
+
+post_deploy_errands:
+- name: register_on_demand_service_broker
+- name: upgrade_subdeployments_on_demand_service_broker
+
+pre_delete_errands:
+- name: delete_subdeployments_on_demand_service_broker
+- name: deregister_on_demand_service_broker
+
+form_types:
+- name: plans_form
+  label: On-demand plan
+  description: Kafka on-demand plan
+  property_inputs:
+  - reference: .broker.plan_name
+    label: Plan name
+    description: Name of the plan.
+  - reference: .broker.plan_description
+    label: Plan description
+    description: Description of the plan
+
+  - reference: .broker.kafka_server_instances
+    label: Kafka instances
+    description: No. of Kafka instances
+  - reference: .broker.kafka_server_vm_type
+    label: Kafka VM type
+    description: Type for Kafka VM
+  - reference: .broker.kafka_server_disk_type
+    label: Kafka Disk type
+    description: Type for Kafka disk
+  - reference: .broker.kafka_az_multi_select
+    label: Kafka availability zone(s)
+    description: Select one or more availability zones
+  - reference: .broker.auto_create_topics
+    label: Auto-create topics
+    description: Create topics when not present
+  - reference: .broker.default_replication_factor
+    label: Default replication factor
+    description: The Kafka replication factor for a topic when not explicitly specified at topic creation time
+
+  - reference: .broker.zookeeper_server_instances
+    label: Zookeeper server instances
+    description: No. of Zookeeper instances
+  - reference: .broker.zookeeper_server_vm_type
+    label: Zookeeper VM type
+    description: Type for Zookeeper VMs
+  - reference: .broker.zookeeper_server_disk_type
+    label: Zookeeper disk type
+    description: Type for Zookeeper disks
+  - reference: .broker.zookeeper_az_multi_select
+    label: Zookeeper availability zone(s)
+    description: Select one or more availability zones
+
+property_blueprints:
+- name: broker_basic_auth
+  type: simple_credentials
+
+job_types:
+- name: broker
+  resource_label: Kafka on-demand broker
+  templates:
+  - name: kafka-service-adapter
+    release: kafka-example-service-adapter
+  - name: admin_tools
+    release: kafka-service
+  - name: broker
+    release: on-demand-service-broker
+    manifest: |
+      port: 8080
+      username: (( .properties.broker_basic_auth.identity ))
+      password: (( .properties.broker_basic_auth.password ))
+      disable_ssl_cert_verification: (( ..cf.ha_proxy.skip_cert_verify.value ))
+      bosh:
+        url: https://(( $director.deployment_ip )):25555
+        root_ca_cert: (( $director.ca_public_key ))
+        authentication:
+          uaa:
+            url: https://(( $director.deployment_ip )):8443
+            client_id: (( $self.uaa_client_name ))
+            client_secret: (( $self.uaa_client_secret ))
+      cf:
+        url: https://api.(( ..cf.cloud_controller.system_domain.value ))
+        authentication:
+          url: https://uaa.(( ..cf.cloud_controller.system_domain.value ))
+          user_credentials:
+            username: (( ..cf.uaa.system_services_credentials.identity ))
+            password: (( ..cf.uaa.system_services_credentials.password ))
+      service_deployment:
+        releases:
+        - name: kafka-service
+          version: latest
+          jobs: [kafka_server, zookeeper_server]
+        stemcell:
+          os: ubuntu-trusty
+          version: latest
+      service_catalog:
+        id: D94A086D-203D-4966-A6F1-60A9E2300F72
+        service_name: kafka-odb
+        service_description: Kafka Service
+        bindable: true
+        plan_updatable: true
+        tags: [kafka]
+        plans:
+        - name: (( .broker.plan_name.value ))
+          plan_id: (( .broker.plan_id.value ))
+          description: (( .broker.plan_description.value ))
+          instance_groups:
+          - name: kafka_server
+            vm_type: (( .broker.kafka_server_vm_type.value ))
+            instances: (( .broker.kafka_server_instances.value ))
+            persistent_disk: (( .broker.kafka_server_disk_type.value ))
+            networks: [(( $self.service_network ))]
+            azs: (( .broker.kafka_az_multi_select.value ))
+          - name: zookeeper_server
+            vm_type: (( .broker.zookeeper_server_vm_type.value ))
+            instances: (( .broker.zookeeper_server_instances.value ))
+            persistent_disk: (( .broker.zookeeper_server_disk_type.value ))
+            networks: [(( $self.service_network ))]
+            azs: (( .broker.zookeeper_az_multi_select.value ))
+          properties:
+            auto_create_topics: (( .broker.auto_create_topics.value ))
+            default_replication_factor: (( .broker.default_replication_factor.value ))
+  static_ip: 0
+  dynamic_ip: 1
+  max_in_flight: 1
+  single_az_only: true
+  instance_definition:
+    name: instances
+    type: integer
+    configurable: true
+    default: 1
+    constraints:
+      max: 1
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: true
+    default: 1024
+  - name: ephemeral_disk
+    type: integer
+    configurable: true
+    default: 2048
+  - name: persistent_disk
+    type: integer
+    configurable: true
+    default: 1024
+    constraints:
+      min: 1024
+  - name: cpu
+    type: integer
+    configurable: true
+    default: 1
+  property_blueprints:
+  - name: plan_name
+    type: string
+    configurable: true
+  - name: plan_id
+    type: uuid
+  - name: plan_description
+    type: string
+    configurable: true
+  - name: kafka_server_instances
+    type: integer
+    configurable: true
+    default: 1
+  - name: kafka_server_vm_type
+    type: vm_type_dropdown
+    configurable: true
+  - name: kafka_server_disk_type
+    type: disk_type_dropdown
+    configurable: true
+  - name: zookeeper_server_instances
+    type: integer
+    configurable: true
+    default: 1
+  - name: zookeeper_server_vm_type
+    type: vm_type_dropdown
+    configurable: true
+  - name: zookeeper_server_disk_type
+    type: disk_type_dropdown
+    configurable: true
+  - name: auto_create_topics
+    type: boolean
+    configurable: true
+    default: true
+  - name: default_replication_factor
+    type: integer
+    configurable: true
+    default: 1
+  - name: kafka_az_multi_select
+    type: service_network_az_multi_select
+    configurable: true
+    optional: false
+  - name: zookeeper_az_multi_select
+    type: service_network_az_multi_select
+    configurable: true
+    optional: false
+
+- name: register_on_demand_service_broker
+  resource_label: Register on-demand broker
+  single_az_only: true
+  templates:
+  - name: register-broker
+    release: on-demand-service-broker
+    manifest: |
+      broker_name: kafka-odb
+      disable_ssl_cert_verification: (( ..cf.ha_proxy.skip_cert_verify.value ))
+      cf:
+        api_url: https://api.(( ..cf.cloud_controller.system_domain.value ))
+        admin_username: (( ..cf.uaa.system_services_credentials.identity ))
+        admin_password: (( ..cf.uaa.system_services_credentials.password ))
+  errand: true
+
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: false
+    default: 1_024
+    constraints:
+      min: 1_024
+
+  - name: ephemeral_disk
+    type: integer
+    configurable: false
+    default: 2_048
+    constraints:
+      min: 1_024
+
+  - name: persistent_disk
+    type: integer
+    configurable: false
+    default: 0
+
+  - name: cpu
+    type: integer
+    configurable: false
+    default: 1
+    constraints:
+      min: 1
+
+  static_ip: 0
+  dynamic_ip: 1
+  max_in_flight: 1
+
+  instance_definition:
+    name: instances
+    type: integer
+    default: 1
+
+  property_blueprints:
+  - name: vm_credentials
+    type: salted_credentials
+    default:
+      identity: vcap
+
+- name: deregister_on_demand_service_broker
+  resource_label: Deregister on-demand broker
+  single_az_only: true
+  templates:
+  - name: deregister-broker
+    release: on-demand-service-broker
+    manifest: |
+      broker_name: kafka-odb
+      disable_ssl_cert_verification: (( ..cf.ha_proxy.skip_cert_verify.value ))
+      cf:
+        api_url: https://api.(( ..cf.cloud_controller.system_domain.value ))
+        admin_username: (( ..cf.uaa.system_services_credentials.identity ))
+        admin_password: (( ..cf.uaa.system_services_credentials.password ))
+  errand: true
+
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: false
+    default: 1_024
+    constraints:
+      min: 1_024
+
+  - name: ephemeral_disk
+    type: integer
+    configurable: false
+    default: 2_048
+    constraints:
+      min: 1_024
+
+  - name: persistent_disk
+    type: integer
+    configurable: false
+    default: 0
+
+  - name: cpu
+    type: integer
+    configurable: false
+    default: 1
+    constraints:
+      min: 1
+
+  static_ip: 0
+  dynamic_ip: 1
+  max_in_flight: 1
+
+  instance_definition:
+    name: instances
+    type: integer
+    default: 1
+
+  property_blueprints:
+  - name: vm_credentials
+    type: salted_credentials
+    default:
+      identity: vcap
+
+- name: delete_subdeployments_on_demand_service_broker
+  resource_label: Delete all on-demand service instances
+  single_az_only: true
+  templates:
+  - name: delete-sub-deployments
+    release: on-demand-service-broker
+    manifest: |
+      disable_ssl_cert_verification: (( ..cf.ha_proxy.skip_cert_verify.value ))
+      cf:
+        api_url: https://api.(( ..cf.cloud_controller.system_domain.value ))
+        admin_username: (( ..cf.uaa.system_services_credentials.identity ))
+        admin_password: (( ..cf.uaa.system_services_credentials.password ))
+  errand: true
+
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: false
+    default: 1_024
+    constraints:
+      min: 1_024
+
+  - name: ephemeral_disk
+    type: integer
+    configurable: false
+    default: 2_048
+    constraints:
+      min: 1_024
+
+  - name: persistent_disk
+    type: integer
+    configurable: false
+    default: 0
+
+  - name: cpu
+    type: integer
+    configurable: false
+    default: 1
+    constraints:
+      min: 1
+
+  static_ip: 0
+  dynamic_ip: 1
+  max_in_flight: 1
+
+  instance_definition:
+    name: instances
+    type: integer
+    default: 1
+
+  property_blueprints:
+  - name: vm_credentials
+    type: salted_credentials
+    default:
+      identity: vcap
+
+- name: upgrade_subdeployments_on_demand_service_broker
+  resource_label: Upgrade all on-demand service instances
+  single_az_only: true
+  templates:
+  - name: upgrade-sub-deployments
+    release: on-demand-service-broker
+  errand: true
+
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: false
+    default: 1_024
+    constraints:
+      min: 1_024
+
+  - name: ephemeral_disk
+    type: integer
+    configurable: false
+    default: 2_048
+    constraints:
+      min: 1_024
+
+  - name: persistent_disk
+    type: integer
+    configurable: false
+    default: 0
+
+  - name: cpu
+    type: integer
+    configurable: false
+    default: 1
+    constraints:
+      min: 1
+
+  static_ip: 0
+  dynamic_ip: 1
+  max_in_flight: 1
+
+  instance_definition:
+    name: instances
+    type: integer
+    default: 1
+
+  property_blueprints:
+  - name: vm_credentials
+    type: salted_credentials
+    default:
+      identity: vcap
