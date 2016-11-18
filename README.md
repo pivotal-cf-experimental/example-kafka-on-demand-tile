@@ -26,7 +26,8 @@ cd example-kafka-on-demand-tile
 
 Download the on-demand service broker from the Pivotal Network:
 
-- Browse to https://network.pivotal.io/products/pivotal-cloud-foundry-services-sdk
+- Active Pivotal partners and customers please email aley@pivotal.io to gain access to the Pivotal Network page.
+- Browse to https://network.pivotal.io/products/on-demand-services-sdk/
 - Download on-demand service broker v0.9.0
 - Save `on-demand-service-broker-0.9.0.tgz` in `example-kafka-on-demand-tile/releases`
 
@@ -46,6 +47,12 @@ bundle exec vara build-pivotal .
 ## Disclaimer
 
 The Kafka service instances created with this tile may not behave correctly. However, the tile and its errands should work with Operations Manager, and it should be possible to create, update, bind, unbind and delete on-demand Kafka service instances in Pivotal Cloud Foundry.
+
+## Releases used to make this tile:
+
+- [Kafka Example Sevice Adapter Release](https://github.com/pivotal-cf-experimental/kafka-example-service-adapter-release)
+- [Kafka Example Service Release](https://github.com/pivotal-cf-experimental/kafka-example-service-release)
+- [On Demand Service Broker Release](https://network.pivotal.io/products/on-demand-services-sdk/) - see above for access details.
 
 ---
 
