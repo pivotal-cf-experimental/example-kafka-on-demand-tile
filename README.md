@@ -28,8 +28,8 @@ Download the on-demand service broker from the Pivotal Network:
 
 - Active Pivotal partners and customers please email aley@pivotal.io to gain access to the Pivotal Network page.
 - Browse to https://network.pivotal.io/products/on-demand-services-sdk/
-- Download on-demand service broker v0.9.0
-- Save `on-demand-service-broker-0.9.0.tgz` in `example-kafka-on-demand-tile/releases`
+- Download on-demand service broker v0.12.4
+- Save `on-demand-service-broker-0.12.4.tgz` in `example-kafka-on-demand-tile/releases`
 
 Build a tile:
 
@@ -40,7 +40,7 @@ bundle exec vara build-pivotal .
 
 ## Use tile
 
-- Upload `example-kafka-on-demand-0.9.0.pivotal` to Pivotal Cloud Foundry Operations Manager.
+- Upload `example-kafka-on-demand-0.12.4.pivotal` to Pivotal Cloud Foundry Operations Manager.
 - Configure the tile.
 - Apply changes.
 
