@@ -77,6 +77,7 @@ job_types:
   - name: broker
     release: on-demand-service-broker
     manifest: |
+      startup_banner: true
       port: 8080
       username: (( .properties.broker_basic_auth.identity ))
       password: (( .properties.broker_basic_auth.password ))
