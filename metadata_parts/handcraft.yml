@@ -31,23 +31,23 @@ form_types:
     description: Description of the plan
 
   - reference: .broker.kafka_server_instances
-    label: Kafka instances
-    description: No. of Kafka instances
+    label: Kafka server instances
+    description: No. of Kafka server instances
   - reference: .broker.kafka_server_vm_type
-    label: Kafka VM type
-    description: Type for Kafka VM
+    label: Kafka server VM type
+    description: Type for Kafka server VM
   - reference: .broker.kafka_server_disk_type
-    label: Kafka Disk type
-    description: Type for Kafka disk
+    label: Kafka server Disk type
+    description: Type for Kafka server disk
   - reference: .broker.kafka_az_multi_select
-    label: Kafka availability zone(s)
+    label: Kafka server availability zone(s)
     description: Select one or more availability zones
   - reference: .broker.auto_create_topics
     label: Auto-create topics
     description: Create topics when not present
   - reference: .broker.default_replication_factor
     label: Default replication factor
-    description: The Kafka replication factor for a topic when not explicitly specified at topic creation time
+    description: The Kafka server replication factor for a topic when not explicitly specified at topic creation time
 
   - reference: .broker.zookeeper_server_instances
     label: Zookeeper server instances
