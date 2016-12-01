@@ -8,10 +8,10 @@ This is an example tile that allows Pivotal Cloud Foundry users to create dedica
 
 ## Pre-requisites
 
-- Pivotal Cloud Foundry Operations Manager [v1.8-RC4](https://network.pivotal.io/products/elastic-runtime#/releases/2184), or later
-- Pivotal Cloud Foundry Elastic Runtime [v1.8.0-rc5](https://network.pivotal.io/products/ops-manager#/releases/2203), or later
+- Pivotal Cloud Foundry Operations Manager [v1.8.0](https://network.pivotal.io/products/elastic-runtime), or later
+- Pivotal Cloud Foundry Elastic Runtime [v1.8.0](https://network.pivotal.io/products/ops-manager), or later
 - Ruby [v2.2](https://www.ruby-lang.org/en/downloads/), or later
-- Vara [v0.22.0](https://rubygems.org/gems/vara/versions/0.22.0)
+- Vara [v0.22.0](https://rubygems.org/gems/vara), or later
 
 > NB: Elastic Runtime must be deployed before the Kafka on-demand tile is installed.
 
