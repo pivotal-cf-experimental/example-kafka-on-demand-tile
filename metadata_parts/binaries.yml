@@ -1,7 +1,7 @@
 ---
 name: example-kafka-on-demand
 product_version: 0.12.4
-metadata_version: '1.9'
+metadata_version: '1.8.10'
 stemcell_criteria:
   os: ubuntu-trusty
   version: '3312'
