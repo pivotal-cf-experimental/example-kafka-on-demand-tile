@@ -122,7 +122,7 @@ job_types:
           instance_groups:
           - name: kafka_server
             vm_type: (( .broker.kafka_server_vm_type.value ))
-            vm_extensions: ["(( .broker.kafka_server_public_ip.value ? 'public_ip' : '' ))"]
+            vm_extensions: ["(( .broker.kafka_server_public_ip.value ? .broker.properties.public_ip_string.value : .broker.properties.null_string.value ))"]
             instances: (( .broker.kafka_server_instances.value ))
             persistent_disk: (( .broker.kafka_server_disk_type.value ))
             networks: [(( $self.service_network ))]
@@ -167,6 +167,14 @@ job_types:
     configurable: true
     default: 1
   property_blueprints:
+  - name: null_string
+    type: string
+    configurable: false
+    default: ~
+  - name: public_ip_string
+    type: string
+    configurable: false
+    default: "public_ip"
   - name: plan_name
     type: string
     configurable: true
