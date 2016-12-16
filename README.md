@@ -26,7 +26,6 @@ cd example-kafka-on-demand-tile
 
 Download the on-demand service broker from the Pivotal Network:
 
-- Active Pivotal partners and customers please email aley@pivotal.io to gain access to the Pivotal Network page.
 - Browse to https://network.pivotal.io/products/on-demand-services-sdk/
 - Download on-demand service broker v0.12.4
 - Save `on-demand-service-broker-0.12.4.tgz` in `example-kafka-on-demand-tile/releases`
