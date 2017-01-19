@@ -51,7 +51,7 @@ The Kafka service instances created with this tile may not behave correctly. How
 
 - [Kafka Example Sevice Adapter Release](https://github.com/pivotal-cf-experimental/kafka-example-service-adapter-release)
 - [Kafka Example Service Release](https://github.com/pivotal-cf-experimental/kafka-example-service-release)
-- [On Demand Service Broker Release](https://network.pivotal.io/products/on-demand-services-sdk/) - see above for access details.
+- [On Demand Service Broker Release](https://network.pivotal.io/products/on-demand-services-sdk/)
 
 ---
 
