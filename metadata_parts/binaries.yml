@@ -1,28 +1,29 @@
 ---
 name: example-kafka-on-demand
-product_version: 0.14.1
+product_version: 0.15.0-rc-1
 metadata_version: '1.8'
 stemcell_criteria:
   os: ubuntu-trusty
   version: '3312'
+
 releases:
 - name: on-demand-service-broker
-  file: on-demand-service-broker-0.14.1.tgz
-  version: 0.14.1
-  md5: bbee98044dacce1c2a7484b661a14757
+  file: on-demand-service-broker-0.15.0-rc-1.tgz
+  version: 0.15.0-rc-1
+  md5: a6859745939acde6ae09728f8d296be7
 
 - name: kafka-example-service-adapter
-  file: kafka-example-service-adapter-0.14.1.tgz
-  version: 0.14.1
-  md5: 5a8d041fedc4d82152a66bb8ed043510
-  url: https://s3.amazonaws.com/cf-services-internal-builds/kafka-example-service-adapter/kafka-example-service-adapter-0.14.1.tgz
+  file: kafka-example-service-adapter-0.15.0-rc-1.tgz
+  version: 0.15.0-rc-1
+  md5: 933fe9e53107052690174730ee3a6ecf
+  url: https://s3.amazonaws.com/cf-services-internal-builds/kafka-example-service-adapter/kafka-example-service-adapter-0.15.0-rc-1.tgz
 
 - name: kafka-service
-  file: kafka-service-0.14.1.tgz
-  version: 0.14.1
-  md5: 0aca3f0d47232d24940fe2330905f7cb
-  url: https://s3.amazonaws.com/cf-services-internal-builds/kafka-service/kafka-service-0.14.1.tgz
+  file: kafka-service-0.15.0-rc-1.tgz
+  version: 0.15.0-rc-1
+  md5: 7af485e2c808601a507c3a8d80e68859
+  url: https://s3.amazonaws.com/cf-services-internal-builds/kafka-service/kafka-service-0.15.0-rc-1.tgz
 
 provides_product_versions:
 - name: example-kafka-on-demand
-  version: 0.14.1
+  version: 0.15.1-rc-1
