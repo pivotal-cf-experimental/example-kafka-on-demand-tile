@@ -19,6 +19,14 @@ pre_delete_errands:
 - name: deregister_on_demand_service_broker
 
 form_types:
+- name: on_demand_broker_form
+  label: On-demand Broker
+  description: Kafka on-demand broker
+  property_inputs:
+  - reference: .broker.global_instance_limit
+    label: Global service instance limit
+    description: Maximum number of service instances that can be provisioned by the on-demand broker
+
 - name: plans_form
   label: On-demand plan
   description: Kafka on-demand plan
@@ -29,6 +37,9 @@ form_types:
   - reference: .broker.plan_description
     label: Plan description
     description: Description of the plan
+  - reference: .broker.plan_instance_limit
+    label: Plan service instance limit
+    description: Maximum number of service instances of this plan that can be provisioned by the on-demand broker
 
   - reference: .broker.kafka_server_instances
     label: Kafka server instances
@@ -112,6 +123,8 @@ job_types:
         id: D94A086D-203D-4966-A6F1-60A9E2300F72
         service_name: kafka-odb
         service_description: Kafka Service
+        global_quotas:
+          service_instance_limit: (( .broker.global_instance_limit.value ))
         bindable: true
         plan_updatable: true
         tags: [kafka]
@@ -119,6 +132,8 @@ job_types:
         - name: (( .broker.plan_name.value ))
           plan_id: (( .broker.plan_id.value ))
           description: (( .broker.plan_description.value ))
+          quotas:
+            service_instance_limit: (( .broker.plan_instance_limit.value ))
           instance_groups:
           - name: kafka_server
             vm_type: (( .broker.kafka_server_vm_type.value ))
@@ -147,6 +162,7 @@ job_types:
     default: 1
     constraints:
       max: 1
+
   resource_definitions:
   - name: ram
     type: integer
@@ -166,6 +182,7 @@ job_types:
     type: integer
     configurable: true
     default: 1
+
   property_blueprints:
   - name: null_string
     type: string
@@ -183,6 +200,14 @@ job_types:
   - name: plan_description
     type: string
     configurable: true
+  - name: global_instance_limit
+    type: integer
+    configurable: true
+    default: 500
+  - name: plan_instance_limit
+    type: integer
+    configurable: true
+    default: 500
   - name: kafka_server_instances
     type: integer
     configurable: true
