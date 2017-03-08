@@ -76,10 +76,6 @@ form_types:
     label: Zookeeper availability zone(s)
     description: Select one or more availability zones
 
-property_blueprints:
-- name: broker_basic_auth
-  type: simple_credentials
-
 job_types:
 - name: broker
   resource_label: Kafka on-demand broker
@@ -93,8 +89,8 @@ job_types:
     manifest: |
       startup_banner: true
       port: 8080
-      username: (( .properties.broker_basic_auth.identity ))
-      password: (( .properties.broker_basic_auth.password ))
+      username: (( .broker.basic_auth.identity ))
+      password: (( .broker.basic_auth.password ))
       disable_ssl_cert_verification: (( ..cf.ha_proxy.skip_cert_verify.value ))
       bosh:
         url: https://(( $director.deployment_ip )):25555
@@ -192,6 +188,9 @@ job_types:
     type: string
     configurable: false
     default: "public_ip"
+  - name: basic_auth
+    type: simple_credentials
+    configurable: false
   - name: plan_name
     type: string
     configurable: true
