@@ -30,7 +30,13 @@ Download the on-demand service broker from the Pivotal Network:
 - Download on-demand service broker v0.15.0-rc-1 (only available to internal groups)
 - Save `on-demand-service-broker-0.15.0-rc-1.tgz` in `example-kafka-on-demand-tile/releases`
 
-Build a tile:
+Download service metrics from the Pivotal Network:
+
+- Browse to https://network.pivotal.io/products/service-metrics-sdk
+- Download service metrics v1.5.5
+- Save `service-metrics-1.5.5.tgz` in `example-kafka-on-demand-tile/releases`
+
+Build the tile:
 
 ```
 bundle
