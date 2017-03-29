@@ -44,9 +44,9 @@ form_types:
   - reference: .broker.kafka_server_instances
     label: Kafka server instances
     description: No. of Kafka server instances
-  - reference: .broker.kafka_server_public_ip
-    label: Kafka server public IP address
-    description: Kafka server instances will be assigned a public IP address
+  - reference: .broker.kafka_server_vm_extensions
+    label: Kafka server VM options
+    description: List of VM options for Kafka server
   - reference: .broker.kafka_server_vm_type
     label: Kafka server VM type
     description: Type for Kafka server VM
@@ -153,7 +153,7 @@ job_types:
           instance_groups:
           - name: kafka_server
             vm_type: (( .broker.kafka_server_vm_type.value ))
-            vm_extensions: ["(( .broker.kafka_server_public_ip.value ? .broker.properties.public_ip_string.value : .broker.properties.null_string.value ))"]
+            vm_extensions: (( .broker.kafka_server_vm_extensions.value ))
             instances: (( .broker.kafka_server_instances.value ))
             persistent_disk: (( .broker.kafka_server_disk_type.value ))
             networks: [(( $self.service_network ))]
@@ -200,14 +200,13 @@ job_types:
     default: 1
 
   property_blueprints:
-  - name: null_string
-    type: string
-    configurable: false
-    default: ~
-  - name: public_ip_string
-    type: string
-    configurable: false
-    default: "public_ip"
+  - name: kafka_server_vm_extensions
+    type: multi_select_options
+    configurable: true
+    optional: true
+    options:
+    - name: "public_ip"
+      label: "Internet Connected VMs (on supported IaaS providers)"
   - name: basic_auth
     type: simple_credentials
     configurable: false
@@ -231,10 +230,6 @@ job_types:
     type: integer
     configurable: true
     default: 1
-  - name: kafka_server_public_ip
-    type: boolean
-    configurable: true
-    default: false
   - name: kafka_server_vm_type
     type: vm_type_dropdown
     configurable: true
