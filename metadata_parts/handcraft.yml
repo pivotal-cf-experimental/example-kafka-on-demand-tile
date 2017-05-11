@@ -113,11 +113,11 @@ job_types:
       password: (( .broker.basic_auth.password ))
       disable_ssl_cert_verification: (( ..cf.ha_proxy.skip_cert_verify.value ))
       bosh:
-        url: https://(( $director.deployment_ip )):25555
+        url: https://(( $director.hostname )):25555
         root_ca_cert: (( $director.ca_public_key ))
         authentication:
           uaa:
-            url: https://(( $director.deployment_ip )):8443
+            url: https://(( $director.hostname )):8443
             client_id: (( $self.uaa_client_name ))
             client_secret: (( $self.uaa_client_secret ))
       cf:
