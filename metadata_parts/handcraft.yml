@@ -15,8 +15,7 @@ post_deploy_errands:
 - name: upgrade_all_service_instances_on_demand_service_broker
 
 pre_delete_errands:
-- name: delete_all_service_instances_on_demand_service_broker
-- name: deregister_on_demand_service_broker
+- name: delete_all_service_instances_and_deregister_on_demand_service_broker
 
 form_types:
 - name: on_demand_broker_form
@@ -483,6 +482,58 @@ job_types:
   templates:
   - name: orphan-deployments
     release: on-demand-service-broker
+  errand: true
+
+  resource_definitions:
+  - name: ram
+    type: integer
+    configurable: false
+    default: 1_024
+    constraints:
+      min: 1_024
+
+  - name: ephemeral_disk
+    type: integer
+    configurable: false
+    default: 2_048
+    constraints:
+      min: 1_024
+
+  - name: persistent_disk
+    type: integer
+    configurable: false
+    default: 0
+
+  - name: cpu
+    type: integer
+    configurable: false
+    default: 1
+    constraints:
+      min: 1
+
+  static_ip: 0
+  dynamic_ip: 1
+  max_in_flight: 1
+
+  instance_definition:
+    name: instances
+    type: integer
+    default: 1
+
+  property_blueprints:
+  - name: vm_credentials
+    type: salted_credentials
+    default:
+      identity: vcap
+
+- name: delete_all_service_instances_and_deregister_on_demand_service_broker
+  resource_label: Delete all on-demand service instances and deregister on demand service broker
+  single_az_only: true
+  templates:
+  - name: delete-all-service-instances-and-deregister-broker
+    release: on-demand-service-broker
+    manifest: |
+      broker_name: kafka-odb
   errand: true
 
   resource_definitions:
