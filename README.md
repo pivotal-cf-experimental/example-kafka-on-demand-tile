@@ -49,6 +49,10 @@ bundle exec vara build-pivotal .
 - Configure the tile.
 - Apply changes.
 
+## Compatibility
+
+This example tile has been successfully tested against PCF versions 1.10 & 1.11
+
 ## Disclaimer
 
 The Kafka service instances created with this tile may not behave correctly. However, the tile and its errands should work with Operations Manager, and it should be possible to create, update, bind, unbind and delete on-demand Kafka service instances in Pivotal Cloud Foundry.
