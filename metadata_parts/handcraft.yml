@@ -83,26 +83,6 @@ job_types:
     release: kafka-example-service-adapter
   - name: admin_tools
     release: kafka-example-service
-  - name: service-metrics
-    release: service-metrics
-    manifest: |
-      service_metrics:
-        origin: example-kafka-on-demand
-        monit_dependencies: [broker]
-  - name: service-metrics-adapter
-    release: on-demand-service-broker
-  - name: metron_agent
-    release: loggregator
-    manifest: |
-      metron_agent:
-        deployment: example-kafka-on-demand
-      loggregator:
-        etcd:
-          machines: (( ..cf.etcd_server.ips ))
-      loggregator_endpoint:
-        shared_secret: (( ..cf.doppler.shared_secret_credentials.password ))
-      metron_endpoint:
-        shared_secret: (( ..cf.doppler.shared_secret_credentials.password ))
   - name: broker
     release: on-demand-service-broker
     manifest: |

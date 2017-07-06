@@ -13,17 +13,6 @@ releases:
   version: 0.16.0
   md5: 7e8fd8444e40afb174ec06504798ec2b
 
-- name: service-metrics
-  file: service-metrics-1.5.5.tgz
-  version: 1.5.5
-  md5: d249df6ad9a1377e75e649a34ed54a60
-
-- name: loggregator
-  file: loggregator-65.tgz
-  version: '65'
-  md5: 14f57017ba9cf1f4692db58cc11d6a1f
-  url: https://bosh.io/d/github.com/cloudfoundry/loggregator?v=65
-
 - name: kafka-example-service-adapter
   file: kafka-example-service-adapter-0.16.0.tgz
   version: 0.16.0
