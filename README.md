@@ -27,14 +27,8 @@ cd example-kafka-on-demand-tile
 Download the on-demand service broker from the Pivotal Network:
 
 - Browse to https://network.pivotal.io/products/on-demand-services-sdk/
-- Download on-demand service broker v0.16.0
-- Save `on-demand-service-broker-0.16.0.tgz` in `example-kafka-on-demand-tile/releases`
-
-Download service metrics from the Pivotal Network:
-
-- Browse to https://network.pivotal.io/products/service-metrics-sdk
-- Download service metrics v1.5.5
-- Save `service-metrics-1.5.5.tgz` in `example-kafka-on-demand-tile/releases`
+- Download on-demand service broker v0.17.0
+- Save `on-demand-service-broker-0.17.0.tgz` in `example-kafka-on-demand-tile/releases`
 
 Build the tile:
 
@@ -45,7 +39,7 @@ bundle exec vara build-pivotal .
 
 ## Use tile
 
-- Upload `example-kafka-on-demand-0.16.0.pivotal` to Pivotal Cloud Foundry Operations Manager.
+- Upload `example-kafka-on-demand-0.17.0.pivotal` to Pivotal Cloud Foundry Operations Manager.
 - Configure the tile.
 - Apply changes.
 
