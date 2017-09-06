@@ -124,6 +124,10 @@ packages:
     - name: admin_tools
       release: kafka-example-service
     dynamic_ip: 1
+    memory: 1024
+    ephemeral_disk: 2048
+    persistent_disk: 1024
+    cpu: 1
     properties:
       startup_banner: true
       port: 8080
@@ -199,23 +203,36 @@ packages:
       disable_ssl_cert_verification: (( ..cf.ha_proxy.skip_cert_verify.value ))
     lifecycle: errand
     post_deploy: true
-    memory: 512
-    ephemeral_disk: 4096
+    memory: 1024
+    ephemeral_disk: 2048
     persistent_disk: 0
-    cpu: 2
+    cpu: 1
     dynamic_ip: 1
     networks:
     - name: default
+
+  - name: upgrade_all_service_instances_on_demand_service_broker
+    templates:
+    - name: upgrade-all-service-instances
+      release: on-demand-service-broker
+    lifecycle: errand
+    post_deploy: true
+    memory: 1024
+    ephemeral_disk: 2048
+    persistent_disk: 0
+    cpu: 1
+    dynamic_ip: 1
+
   - name: delete_all_service_instances_and_deregister_on_demand_service_broker
     templates:
     - name: delete-all-service-instances-and-deregister-broker
       release: on-demand-service-broker
     lifecycle: errand
     pre_delete: true
-    memory: 512
-    ephemeral_disk: 4096
+    memory: 1024
+    ephemeral_disk: 2048
     persistent_disk: 0
-    cpu: 2
+    cpu: 1
     dynamic_ip: 1
     properties:
       broker_name: kafka-odb
