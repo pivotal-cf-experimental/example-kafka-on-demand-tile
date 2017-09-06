@@ -4,3 +4,6 @@
 *.pivotal.yml
 content_migrations/*.yml
 metadata/*.yml
+product/
+tile-history.yml
+

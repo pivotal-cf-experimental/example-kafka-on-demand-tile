@@ -1,0 +1,240 @@
+name: kafka
+icon_file: resources/icon.png
+label: Kafka example service
+description: Kafka example service
+metadata_version: 1.8
+service_broker: true
+
+properties:
+- name: basic_auth
+  type: simple_credentials
+  configurable: false
+- name: plan_id
+  type: uuid
+  configurable: false
+
+forms:
+- name: kafka_odb_form
+  label: Kafka Service
+  properties:
+  - name: global_instance_limit
+    label: Global service instance limit
+    type: integer
+    configurable: true
+    default: 500
+  - name: plan_name
+    label: Plan name
+    description: Name of the plan.
+    type: string
+    configurable: true
+  - name: plan_description
+    label: Plan description
+    description: Description of the plan
+    type: string
+    configurable: true
+  - name: plan_instance_limit
+    label: Plan service instance limit
+    description: Maximum number of service instances of this plan that can be provisioned by the on-demand broker
+    type: integer
+    configurable: true
+    default: 500
+  - name: kafka_server_vm_type
+    label: Kafka server VM type
+    description: Type for Kafka server VM
+    type: vm_type_dropdown
+    configurable: true
+  - name: kafka_server_vm_extensions
+    label: Kafka server VM options
+    description: List of VM options for Kafka server
+    type: multi_select_options
+    configurable: true
+    optional: true
+    options:
+    - name: "public_ip"
+      label: "Internet Connected VMs (on supported IaaS providers)"
+  - name: kafka_server_instances
+    label: Kafka server instances
+    description: No. of Kafka server instances
+    type: integer
+    configurable: true
+    default: 1
+  - name: kafka_server_disk_type
+    label: Kafka server Disk type
+    description: Type for Kafka server disk
+    type: disk_type_dropdown
+    configurable: true
+  - name: kafka_az_multi_select
+    label: Kafka server availability zone(s)
+    description: Select one or more availability zones
+    type: service_network_az_multi_select
+    configurable: true
+    optional: false
+  - name: zookeeper_server_vm_type
+    label: Zookeeper VM type
+    description: Type for Zookeeper VMs
+    type: vm_type_dropdown
+    configurable: true
+  - name: zookeeper_server_instances
+    label: Zookeeper server instances
+    description: No. of Zookeeper instances
+    type: integer
+    configurable: true
+    default: 1
+  - name: zookeeper_server_disk_type
+    label: Zookeeper disk type
+    description: Type for Zookeeper disks
+    type: disk_type_dropdown
+    configurable: true
+  - name: zookeeper_az_multi_select
+    label: Zookeeper availability zone(s)
+    description: Select one or more availability zones
+    type: service_network_az_multi_select
+    configurable: true
+    optional: false
+  - name: auto_create_topics
+    label: Auto-create topics
+    description: Create topics when not present
+    type: boolean
+    configurable: true
+    default: true
+  - name: default_replication_factor
+    label: Default replication factor
+    description: The Kafka server replication factor for a topic when not explicitly specified at topic creation time
+    type: integer
+    configurable: true
+    default: 1
+
+packages:
+- name: kafka-example-service
+  type: bosh-release
+  path: releases/kafka-example-service-0.17.0.tgz
+- name: kafka-example-service-adapter
+  type: bosh-release
+  path: releases/kafka-example-service-adapter-0.17.0.tgz
+- name: on-demand-service-broker
+  type: bosh-release
+  path: releases/on-demand-service-broker-0.17.0.tgz
+  jobs:
+  - name: broker
+    templates:
+    - name: broker
+      release: on-demand-service-broker
+    - name: kafka-service-adapter
+      release: kafka-example-service-adapter
+    - name: admin_tools
+      release: kafka-example-service
+    dynamic_ip: 1
+    memory: 1024
+    ephemeral_disk: 2048
+    persistent_disk: 1024
+    cpu: 1
+    properties:
+      startup_banner: true
+      port: 8080
+      username: (( .properties.basic_auth.identity ))
+      password: (( .properties.basic_auth.password ))
+      disable_ssl_cert_verification: (( ..cf.ha_proxy.skip_cert_verify.value ))
+      bosh:
+        url: https://(( $director.hostname )):25555
+        root_ca_cert: (( $director.ca_public_key ))
+        authentication:
+          uaa:
+            url: https://(( $director.hostname )):8443
+            client_id: (( $self.uaa_client_name ))
+            client_secret: (( $self.uaa_client_secret ))
+      cf:
+        url: https://api.(( ..cf.cloud_controller.system_domain.value ))
+        authentication:
+          url: https://uaa.(( ..cf.cloud_controller.system_domain.value ))
+          user_credentials:
+            username: (( ..cf.uaa.system_services_credentials.identity ))
+            password: (( ..cf.uaa.system_services_credentials.password ))
+      service_deployment:
+        releases:
+        - name: kafka-example-service
+          version: 0.17.0
+          jobs: [kafka_server, zookeeper_server]
+        stemcell:
+          os: ubuntu-trusty
+          version: (( $self.stemcell_version ))
+      service_catalog:
+        id: D94A086D-203D-4966-A6F1-60A9E2300F72
+        service_name: kafka-odb
+        service_description: Kafka Service
+        global_quotas:
+          service_instance_limit: (( .properties.global_instance_limit.value ))
+        bindable: true
+        plan_updatable: true
+        tags: [kafka]
+        plans:
+        - name: (( .properties.plan_name.value ))
+          plan_id: (( .properties.plan_id.value ))
+          description: (( .properties.plan_description.value ))
+          quotas:
+            service_instance_limit: (( .properties.plan_instance_limit.value ))
+          instance_groups:
+          - name: kafka_server
+            vm_type: (( .properties.kafka_server_vm_type.value ))
+            vm_extensions: (( .properties.kafka_server_vm_extensions.value ))
+            instances: (( .properties.kafka_server_instances.value ))
+            persistent_disk: (( .properties.kafka_server_disk_type.value ))
+            networks: [(( $self.service_network ))]
+            azs: (( .properties.kafka_az_multi_select.value ))
+          - name: zookeeper_server
+            vm_type: (( .properties.zookeeper_server_vm_type.value ))
+            instances: (( .properties.zookeeper_server_instances.value ))
+            persistent_disk: (( .properties.zookeeper_server_disk_type.value ))
+            networks: [(( $self.service_network ))]
+            azs: (( .properties.zookeeper_az_multi_select.value ))
+          properties:
+            auto_create_topics: (( .properties.auto_create_topics.value ))
+            default_replication_factor: (( .properties.default_replication_factor.value ))
+
+  - name: register_on_demand_service_broker
+    templates:
+    - name: register-broker
+      release: on-demand-service-broker
+    properties:
+      broker_name: kafka-odb
+      cf:
+        api_url: https://api.(( ..cf.cloud_controller.system_domain.value ))
+        admin_username: (( ..cf.uaa.system_services_credentials.identity ))
+        admin_password: (( ..cf.uaa.system_services_credentials.password ))
+      disable_ssl_cert_verification: (( ..cf.ha_proxy.skip_cert_verify.value ))
+    lifecycle: errand
+    post_deploy: true
+    memory: 1024
+    ephemeral_disk: 2048
+    persistent_disk: 0
+    cpu: 1
+    dynamic_ip: 1
+    networks:
+    - name: default
+
+  - name: upgrade_all_service_instances_on_demand_service_broker
+    templates:
+    - name: upgrade-all-service-instances
+      release: on-demand-service-broker
+    lifecycle: errand
+    post_deploy: true
+    memory: 1024
+    ephemeral_disk: 2048
+    persistent_disk: 0
+    cpu: 1
+    dynamic_ip: 1
+
+  - name: delete_all_service_instances_and_deregister_on_demand_service_broker
+    templates:
+    - name: delete-all-service-instances-and-deregister-broker
+      release: on-demand-service-broker
+    lifecycle: errand
+    pre_delete: true
+    memory: 1024
+    ephemeral_disk: 2048
+    persistent_disk: 0
+    cpu: 1
+    dynamic_ip: 1
+    properties:
+      broker_name: kafka-odb
+    networks:
+    - name: default
