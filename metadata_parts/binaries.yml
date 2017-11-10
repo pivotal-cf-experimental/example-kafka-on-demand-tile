@@ -16,7 +16,7 @@ releases:
 - name: kafka-example-service-adapter
   file: kafka-example-service-adapter-0.17.0.tgz
   version: 0.17.0
-  md5: cb06f0ffeb3c7e10e85f54a3a727ba49
+  md5: 100f026eb45c50d8591527a99d050a18
   url: https://s3.amazonaws.com/cf-services-internal-builds/kafka-example-service-adapter/kafka-example-service-adapter-0.17.0.tgz
 
 - name: kafka-example-service
@@ -28,3 +28,7 @@ releases:
 provides_product_versions:
 - name: example-kafka-on-demand
   version: 0.17.0
+
+requires_product_versions:
+- name: cf
+  version: ">= 1.10"
