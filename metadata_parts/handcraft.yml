@@ -212,9 +212,19 @@ job_types:
   - name: kafka_server_vm_type
     type: vm_type_dropdown
     configurable: true
+    resource_definitions:
+    - name: ram
+      default: 2048
+    - name: ephemeral_disk
+      default: 1024
+    - name: cpu
+      default: 2
   - name: kafka_server_disk_type
     type: disk_type_dropdown
     configurable: true
+    resource_definitions:
+    - name: persistent_disk
+      default: 2048
   - name: zookeeper_server_instances
     type: integer
     configurable: true
@@ -222,9 +232,19 @@ job_types:
   - name: zookeeper_server_vm_type
     type: vm_type_dropdown
     configurable: true
+    resource_definitions:
+    - name: ram
+      default: 2048
+    - name: ephemeral_disk
+      default: 1024
+    - name: cpu
+      default: 2
   - name: zookeeper_server_disk_type
     type: disk_type_dropdown
     configurable: true
+    resource_definitions:
+    - name: persistent_disk
+      default: 2048
   - name: auto_create_topics
     type: boolean
     configurable: true
