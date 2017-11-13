@@ -216,7 +216,7 @@ job_types:
     - name: ram
       default: 2048
     - name: ephemeral_disk
-      default: 1024
+      default: 8192
     - name: cpu
       default: 2
   - name: kafka_server_disk_type
@@ -236,7 +236,7 @@ job_types:
     - name: ram
       default: 2048
     - name: ephemeral_disk
-      default: 1024
+      default: 8192
     - name: cpu
       default: 2
   - name: zookeeper_server_disk_type
