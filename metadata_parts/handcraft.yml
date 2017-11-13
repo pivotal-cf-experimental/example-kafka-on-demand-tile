@@ -215,6 +215,9 @@ job_types:
     resource_definitions:
     - name: ram
       default: 2048
+      constraints:
+        min: 2048
+        power_of_two: true
     - name: ephemeral_disk
       default: 8192
     - name: cpu
@@ -225,6 +228,9 @@ job_types:
     resource_definitions:
     - name: persistent_disk
       default: 2048
+      constraints:
+        min: 2048
+        power_of_two: true
   - name: zookeeper_server_instances
     type: integer
     configurable: true
@@ -235,6 +241,9 @@ job_types:
     resource_definitions:
     - name: ram
       default: 2048
+      constraints:
+        min: 2048
+        power_of_two: true
     - name: ephemeral_disk
       default: 8192
     - name: cpu
@@ -245,6 +254,9 @@ job_types:
     resource_definitions:
     - name: persistent_disk
       default: 2048
+      constraints:
+        min: 2048
+        power_of_two: true
   - name: auto_create_topics
     type: boolean
     configurable: true
