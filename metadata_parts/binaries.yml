@@ -26,6 +26,12 @@ releases:
   md5: 22fd9d794baaa177d31b28f8742210d5
   url: https://s3.amazonaws.com/cf-services-internal-builds/kafka-service/kafka-example-service-0.18.0.tgz
 
+- name: consul
+  file: consul-release-183.tgz
+  version: "183"
+  md5: a6d9f4d571f0b840342a8adcdb27b3a0
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/consul-release?v=183
+
 provides_product_versions:
 - name: example-kafka-on-demand
   version: 0.18.0

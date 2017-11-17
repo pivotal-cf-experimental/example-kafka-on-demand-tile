@@ -91,6 +91,13 @@ job_types:
     release: kafka-example-service-adapter
   - name: admin_tools
     release: kafka-example-service
+  - name: consul_agent
+    release: consul
+    consumes: |
+      consul: nil
+      consul_server: nil
+      consul_common: { from: consul_common_link, deployment: "(( ..cf.deployment_name ))" }
+      consul_client: { from: consul_client_link, deployment: "(( ..cf.deployment_name ))" }
   - name: broker
     consumes: |
       credhub: (( .properties.secure_bindings.selected_option.parsed_manifest(credhub_link) ))
