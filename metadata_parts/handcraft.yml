@@ -36,6 +36,9 @@ form_types:
   - reference: .broker.plan_description
     label: Plan description
     description: Description of the plan
+  - reference: .broker.secure_bindings_enabled
+    label: Enable Secure Bindings
+    description: Requires CredHub enabled on PAS
   - reference: .broker.plan_instance_limit
     label: Plan service instance limit
     description: Maximum number of service instances of this plan that can be provisioned by the on-demand broker
@@ -85,6 +88,8 @@ job_types:
     release: kafka-example-service
   - name: broker
     release: on-demand-service-broker
+    consumes: |
+      credhub: {from: credhub, deployment: "(( ..cf.deployment_name ))"}
     manifest: |
       startup_banner: true
       port: 8080
@@ -106,6 +111,13 @@ job_types:
           user_credentials:
             username: (( ..cf.uaa.system_services_credentials.identity ))
             password: (( ..cf.uaa.system_services_credentials.password ))
+      secure_binding_credentials:
+        enabled: (( .broker.secure_bindings_enabled.value ))
+        authentication:
+          uaa:
+            client_id: (( ..cf.uaa.services_credhub_credentials.identity ))
+            client_secret: (( ..cf.uaa.services_credhub_credentials.password ))
+            ca_cert: (( $ops_manager.ca_certificate ))
       service_deployment:
         releases:
         - name: kafka-example-service
@@ -201,6 +213,10 @@ job_types:
     type: integer
     configurable: true
     default: 500
+  - name: secure_bindings_enabled
+    type: boolean
+    configurable: true
+    default: false
   - name: plan_instance_limit
     type: integer
     configurable: true

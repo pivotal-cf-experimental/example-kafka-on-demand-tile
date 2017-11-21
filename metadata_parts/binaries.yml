@@ -1,6 +1,6 @@
 ---
 name: example-kafka-on-demand
-product_version: 0.17.0
+product_version: 0.18.0
 metadata_version: '1.8'
 stemcell_criteria:
   os: ubuntu-trusty
@@ -9,9 +9,10 @@ stemcell_criteria:
 
 releases:
 - name: on-demand-service-broker
-  file: on-demand-service-broker-0.17.0.tgz
-  version: 0.17.0
-  md5: f74858b0c7930f17e03e5022ecf0fbfd
+  file: on-demand-service-broker-0.18.0-alpha.1.tgz
+  version: 0.18.0-alpha.1
+  md5: 66e183f9c65349a431b70a84834ce266
+  url: https://storage.googleapis.com/dev-releases/on-demand-service-broker-0.18.0-alpha.1.tgz
 
 - name: kafka-example-service-adapter
   file: kafka-example-service-adapter-0.17.0.tgz
