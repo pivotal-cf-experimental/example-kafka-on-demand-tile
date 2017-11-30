@@ -25,17 +25,6 @@ form_types:
   - reference: .broker.global_instance_limit
     label: Global service instance limit
     description: Maximum number of service instances that can be provisioned by the on-demand broker
-
-- name: plans_form
-  label: On-demand plan
-  description: Kafka on-demand plan
-  property_inputs:
-  - reference: .broker.plan_name
-    label: Plan name
-    description: Name of the plan.
-  - reference: .broker.plan_description
-    label: Plan description
-    description: Description of the plan
   - reference: .properties.secure_bindings
     label: Enable Secure Bindings
     description: Requires CredHub enabled on PAS
@@ -44,42 +33,98 @@ form_types:
       label: 'No'
     - reference: ".properties.secure_bindings.enabled"
       label: 'Yes'
-  - reference: .broker.plan_instance_limit
+
+- name: plan_1_form
+  label: On-demand plan 1
+  description: Kafka on-demand plan 1
+  property_inputs:
+  - reference: .broker.plan_name_1
+    label: Plan name
+    description: Name of plan.
+  - reference: .broker.plan_description_1
+    label: Plan description
+    description: Description of plan
+  - reference: .broker.plan_instance_limit_1
     label: Plan service instance limit
     description: Maximum number of service instances of this plan that can be provisioned by the on-demand broker
-
-  - reference: .broker.kafka_server_instances
+  - reference: .broker.kafka_server_instances_1
     label: Kafka server instances
     description: No. of Kafka server instances
-  - reference: .broker.kafka_server_vm_extensions
+  - reference: .broker.kafka_server_vm_extensions_1
     label: Kafka server VM options
     description: List of VM options for Kafka server
-  - reference: .broker.kafka_server_vm_type
+  - reference: .broker.kafka_server_vm_type_1
     label: Kafka server VM type
     description: Type for Kafka server VM
-  - reference: .broker.kafka_server_disk_type
+  - reference: .broker.kafka_server_disk_type_1
     label: Kafka server Disk type
     description: Type for Kafka server disk
-  - reference: .broker.kafka_az_multi_select
+  - reference: .broker.kafka_az_multi_select_1
     label: Kafka server availability zone(s)
     description: Select one or more availability zones
-  - reference: .broker.auto_create_topics
+  - reference: .broker.auto_create_topics_1
     label: Auto-create topics
     description: Create topics when not present
-  - reference: .broker.default_replication_factor
+  - reference: .broker.default_replication_factor_1
     label: Default replication factor
     description: The Kafka server replication factor for a topic when not explicitly specified at topic creation time
-
-  - reference: .broker.zookeeper_server_instances
+  - reference: .broker.zookeeper_server_instances_1
     label: Zookeeper server instances
     description: No. of Zookeeper instances
-  - reference: .broker.zookeeper_server_vm_type
+  - reference: .broker.zookeeper_server_vm_type_1
     label: Zookeeper VM type
     description: Type for Zookeeper VMs
-  - reference: .broker.zookeeper_server_disk_type
+  - reference: .broker.zookeeper_server_disk_type_1
     label: Zookeeper disk type
     description: Type for Zookeeper disks
-  - reference: .broker.zookeeper_az_multi_select
+  - reference: .broker.zookeeper_az_multi_select_1
+    label: Zookeeper availability zone(s)
+    description: Select one or more availability zones
+
+- name: plan_2_form
+  label: On-demand plan 2
+  description: Kafka on-demand plan 2
+  property_inputs:
+  - reference: .broker.plan_name_2
+    label: Plan name
+    description: Name of plan.
+  - reference: .broker.plan_description_2
+    label: Plan description
+    description: Description of plan
+  - reference: .broker.plan_instance_limit_2
+    label: Plan service instance limit
+    description: Maximum number of service instances of this plan that can be provisioned by the on-demand broker
+  - reference: .broker.kafka_server_instances_2
+    label: Kafka server instances
+    description: No. of Kafka server instances
+  - reference: .broker.kafka_server_vm_extensions_2
+    label: Kafka server VM options
+    description: List of VM options for Kafka server
+  - reference: .broker.kafka_server_vm_type_2
+    label: Kafka server VM type
+    description: Type for Kafka server VM
+  - reference: .broker.kafka_server_disk_type_2
+    label: Kafka server Disk type
+    description: Type for Kafka server disk
+  - reference: .broker.kafka_az_multi_select_2
+    label: Kafka server availability zone(s)
+    description: Select one or more availability zones
+  - reference: .broker.auto_create_topics_2
+    label: Auto-create topics
+    description: Create topics when not present
+  - reference: .broker.default_replication_factor_2
+    label: Default replication factor
+    description: The Kafka server replication factor for a topic when not explicitly specified at topic creation time
+  - reference: .broker.zookeeper_server_instances_2
+    label: Zookeeper server instances
+    description: No. of Zookeeper instances
+  - reference: .broker.zookeeper_server_vm_type_2
+    label: Zookeeper VM type
+    description: Type for Zookeeper VMs
+  - reference: .broker.zookeeper_server_disk_type_2
+    label: Zookeeper disk type
+    description: Type for Zookeeper disks
+  - reference: .broker.zookeeper_az_multi_select_2
     label: Zookeeper availability zone(s)
     description: Select one or more availability zones
 
@@ -142,28 +187,52 @@ job_types:
         plan_updatable: true
         tags: [kafka]
         plans:
-        - name: (( .broker.plan_name.value ))
-          plan_id: (( .broker.plan_id.value ))
-          description: (( .broker.plan_description.value ))
+        - name: (( .broker.plan_name_1.value ))
+          plan_id: (( .broker.plan_id_1.value ))
+          description: (( .broker.plan_description_1.value ))
           quotas:
-            service_instance_limit: (( .broker.plan_instance_limit.value ))
+            service_instance_limit: (( .broker.plan_instance_limit_1.value ))
           instance_groups:
           - name: kafka_server
-            vm_type: (( .broker.kafka_server_vm_type.value ))
-            vm_extensions: (( .broker.kafka_server_vm_extensions.value ))
-            instances: (( .broker.kafka_server_instances.value ))
-            persistent_disk: (( .broker.kafka_server_disk_type.value ))
+            vm_type: (( .broker.kafka_server_vm_type_1.value ))
+            vm_extensions: (( .broker.kafka_server_vm_extensions_1.value ))
+            instances: (( .broker.kafka_server_instances_1.value ))
+            persistent_disk: (( .broker.kafka_server_disk_type_1.value ))
             networks: [(( $self.service_network ))]
-            azs: (( .broker.kafka_az_multi_select.value ))
+            azs: (( .broker.kafka_az_multi_select_1.value ))
           - name: zookeeper_server
-            vm_type: (( .broker.zookeeper_server_vm_type.value ))
-            instances: (( .broker.zookeeper_server_instances.value ))
-            persistent_disk: (( .broker.zookeeper_server_disk_type.value ))
+            vm_type: (( .broker.zookeeper_server_vm_type_1.value ))
+            instances: (( .broker.zookeeper_server_instances_1.value ))
+            persistent_disk: (( .broker.zookeeper_server_disk_type_1.value ))
             networks: [(( $self.service_network ))]
-            azs: (( .broker.zookeeper_az_multi_select.value ))
+            azs: (( .broker.zookeeper_az_multi_select_1.value ))
           properties:
-            auto_create_topics: (( .broker.auto_create_topics.value ))
-            default_replication_factor: (( .broker.default_replication_factor.value ))
+            auto_create_topics: (( .broker.auto_create_topics_1.value ))
+            default_replication_factor: (( .broker.default_replication_factor_1.value ))
+
+        - name: (( .broker.plan_name_2.value ))
+          plan_id: (( .broker.plan_id_2.value ))
+          description: (( .broker.plan_description_2.value ))
+          quotas:
+            service_instance_limit: (( .broker.plan_instance_limit_2.value ))
+          instance_groups:
+          - name: kafka_server
+            vm_type: (( .broker.kafka_server_vm_type_2.value ))
+            vm_extensions: (( .broker.kafka_server_vm_extensions_2.value ))
+            instances: (( .broker.kafka_server_instances_2.value ))
+            persistent_disk: (( .broker.kafka_server_disk_type_2.value ))
+            networks: [(( $self.service_network ))]
+            azs: (( .broker.kafka_az_multi_select_2.value ))
+          - name: zookeeper_server
+            vm_type: (( .broker.zookeeper_server_vm_type_2.value ))
+            instances: (( .broker.zookeeper_server_instances_2.value ))
+            persistent_disk: (( .broker.zookeeper_server_disk_type_2.value ))
+            networks: [(( $self.service_network ))]
+            azs: (( .broker.zookeeper_az_multi_select_2.value ))
+          properties:
+            auto_create_topics: (( .broker.auto_create_topics_2.value ))
+            default_replication_factor: (( .broker.default_replication_factor_2.value ))
+
   static_ip: 0
   dynamic_ip: 1
   max_in_flight: 1
@@ -197,37 +266,38 @@ job_types:
     default: 1
 
   property_blueprints:
-  - name: kafka_server_vm_extensions
+  - name: global_instance_limit
+    type: integer
+    configurable: true
+    default: 500
+  - name: basic_auth
+    type: simple_credentials
+    configurable: false
+
+  - name: kafka_server_vm_extensions_1
     type: multi_select_options
     configurable: true
     optional: true
     options:
     - name: "public_ip"
       label: "Internet Connected VMs (on supported IaaS providers)"
-  - name: basic_auth
-    type: simple_credentials
-    configurable: false
-  - name: plan_name
+  - name: plan_name_1
     type: string
     configurable: true
-  - name: plan_id
+  - name: plan_id_1
     type: uuid
-  - name: plan_description
+  - name: plan_description_1
     type: string
     configurable: true
-  - name: global_instance_limit
+  - name: plan_instance_limit_1
     type: integer
     configurable: true
     default: 500
-  - name: plan_instance_limit
-    type: integer
-    configurable: true
-    default: 500
-  - name: kafka_server_instances
+  - name: kafka_server_instances_1
     type: integer
     configurable: true
     default: 1
-  - name: kafka_server_vm_type
+  - name: kafka_server_vm_type_1
     type: vm_type_dropdown
     configurable: true
     resource_definitions:
@@ -240,7 +310,7 @@ job_types:
       default: 8192
     - name: cpu
       default: 2
-  - name: kafka_server_disk_type
+  - name: kafka_server_disk_type_1
     type: disk_type_dropdown
     configurable: true
     resource_definitions:
@@ -249,11 +319,11 @@ job_types:
       constraints:
         min: 2048
         power_of_two: true
-  - name: zookeeper_server_instances
+  - name: zookeeper_server_instances_1
     type: integer
     configurable: true
     default: 1
-  - name: zookeeper_server_vm_type
+  - name: zookeeper_server_vm_type_1
     type: vm_type_dropdown
     configurable: true
     resource_definitions:
@@ -266,7 +336,7 @@ job_types:
       default: 8192
     - name: cpu
       default: 2
-  - name: zookeeper_server_disk_type
+  - name: zookeeper_server_disk_type_1
     type: disk_type_dropdown
     configurable: true
     resource_definitions:
@@ -275,19 +345,107 @@ job_types:
       constraints:
         min: 2048
         power_of_two: true
-  - name: auto_create_topics
+  - name: auto_create_topics_1
     type: boolean
     configurable: true
     default: true
-  - name: default_replication_factor
+  - name: default_replication_factor_1
     type: integer
     configurable: true
     default: 1
-  - name: kafka_az_multi_select
+  - name: kafka_az_multi_select_1
     type: service_network_az_multi_select
     configurable: true
     optional: false
-  - name: zookeeper_az_multi_select
+  - name: zookeeper_az_multi_select_1
+    type: service_network_az_multi_select
+    configurable: true
+    optional: false
+
+  - name: kafka_server_vm_extensions_2
+    type: multi_select_options
+    configurable: true
+    optional: true
+    options:
+    - name: "public_ip"
+      label: "Internet Connected VMs (on supported IaaS providers)"
+  - name: plan_name_2
+    type: string
+    configurable: true
+  - name: plan_id_2
+    type: uuid
+  - name: plan_description_2
+    type: string
+    configurable: true
+  - name: plan_instance_limit_2
+    type: integer
+    configurable: true
+    default: 500
+  - name: kafka_server_instances_2
+    type: integer
+    configurable: true
+    default: 1
+  - name: kafka_server_vm_type_2
+    type: vm_type_dropdown
+    configurable: true
+    resource_definitions:
+    - name: ram
+      default: 2048
+      constraints:
+        min: 2048
+        power_of_two: true
+    - name: ephemeral_disk
+      default: 8192
+    - name: cpu
+      default: 2
+  - name: kafka_server_disk_type_2
+    type: disk_type_dropdown
+    configurable: true
+    resource_definitions:
+    - name: persistent_disk
+      default: 2048
+      constraints:
+        min: 2048
+        power_of_two: true
+  - name: zookeeper_server_instances_2
+    type: integer
+    configurable: true
+    default: 1
+  - name: zookeeper_server_vm_type_2
+    type: vm_type_dropdown
+    configurable: true
+    resource_definitions:
+    - name: ram
+      default: 2048
+      constraints:
+        min: 2048
+        power_of_two: true
+    - name: ephemeral_disk
+      default: 8192
+    - name: cpu
+      default: 2
+  - name: zookeeper_server_disk_type_2
+    type: disk_type_dropdown
+    configurable: true
+    resource_definitions:
+    - name: persistent_disk
+      default: 2048
+      constraints:
+        min: 2048
+        power_of_two: true
+  - name: auto_create_topics_2
+    type: boolean
+    configurable: true
+    default: true
+  - name: default_replication_factor_2
+    type: integer
+    configurable: true
+    default: 1
+  - name: kafka_az_multi_select_2
+    type: service_network_az_multi_select
+    configurable: true
+    optional: false
+  - name: zookeeper_az_multi_select_2
     type: service_network_az_multi_select
     configurable: true
     optional: false
