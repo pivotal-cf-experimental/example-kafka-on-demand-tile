@@ -6,6 +6,10 @@ This project relies on the Pivotal Cloud Foundry Services SDK, available to cust
 
 This is an example tile that allows Pivotal Cloud Foundry users to create dedicated Kafka clusters on-demand from the marketplace.
 
+## Documentation
+
+Documentation for this example can be found [here](https://docs.pivotal.io/svc-sdk/odb/tile.html)
+
 ## Pre-requisites
 
 - Pivotal Cloud Foundry Operations Manager [v1.10](https://network.pivotal.io/products/ops-manager), or later
