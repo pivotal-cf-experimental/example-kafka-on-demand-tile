@@ -128,6 +128,17 @@ form_types:
     label: Zookeeper availability zone(s)
     description: Select one or more availability zones
 
+- name: service_instances_upgrade
+  label: Service instances upgrade
+  description: Configuration for the upgrade-all-service-instances errand
+  property_inputs:
+  - reference: .upgrade_all_service_instances_on_demand_service_broker.max_in_flight
+    label: Number of simultaneous upgrades
+    description: The maximum number of service instances that will be in an upgrading state at the same time. This should be set to a maximum of 1 less than the BOSH worker count.
+  - reference: .upgrade_all_service_instances_on_demand_service_broker.canaries
+    label: Number of upgrade canary instances
+    description: Number of service instances to upgrade first before going on to upgrade the rest of the instances.
+
 job_types:
 - name: broker
   resource_label: Kafka on-demand broker
@@ -620,6 +631,9 @@ job_types:
   templates:
   - name: upgrade-all-service-instances
     release: on-demand-service-broker
+    manifest: |
+      max_in_flight: (( .upgrade_all_service_instances_on_demand_service_broker.max_in_flight.value ))
+      canaries: (( .upgrade_all_service_instances_on_demand_service_broker.canaries.value ))
   errand: true
 
   resource_definitions:
@@ -663,6 +677,20 @@ job_types:
     type: salted_credentials
     default:
       identity: vcap
+
+  - name: max_in_flight
+    type: integer
+    default: 1
+    configurable: true
+    constraints:
+      min: 1
+
+  - name: canaries
+    type: integer
+    default: 0
+    configurable: true
+    constraints:
+      min: 0
 
 - name: orphan_deployments_on_demand_service_broker
   resource_label: List orphan on-demand deployments
