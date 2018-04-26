@@ -1,0 +1,19 @@
+---
+name: on-demand-broker
+label: On-demand Broker
+description: Kafka on-demand broker
+property_inputs:
+- reference: .broker.enable_plan_schemas
+  label: Enable Plan Schemas in the Service Catalog
+  description: If set to true, the Service Catalog will include JSON Schemas
+- reference: .broker.global_instance_limit
+  label: Global service instance limit
+  description: Maximum number of service instances that can be provisioned by the on-demand broker
+- reference: .properties.secure_bindings
+  label: Enable Secure Bindings
+  description: Requires CredHub enabled on PAS
+  selector_property_inputs:
+  - reference: ".properties.secure_bindings.disabled"
+    label: 'No'
+  - reference: ".properties.secure_bindings.enabled"
+    label: 'Yes'

@@ -1,0 +1,63 @@
+---
+name: upgrade-all-service-instances
+resource_label: Upgrade all on-demand service instances
+single_az_only: true
+errand: true
+static_ip: 0
+dynamic_ip: 1
+max_in_flight: 1
+
+instance_definition:
+  name: instances
+  type: integer
+  default: 1
+
+templates:
+- $(job "upgrade-all-service-instances")
+
+resource_definitions:
+- name: ram
+  type: integer
+  configurable: false
+  default: 1_024
+  constraints:
+    min: 1_024
+
+- name: ephemeral_disk
+  type: integer
+  configurable: false
+  default: 2_048
+  constraints:
+    min: 1_024
+
+- name: persistent_disk
+  type: integer
+  configurable: false
+  default: 0
+
+- name: cpu
+  type: integer
+  configurable: false
+  default: 1
+  constraints:
+    min: 1
+
+property_blueprints:
+- name: vm_credentials
+  type: salted_credentials
+  default:
+    identity: vcap
+
+- name: max_in_flight
+  type: integer
+  default: 1
+  configurable: true
+  constraints:
+    min: 1
+
+- name: canaries
+  type: integer
+  default: 0
+  configurable: true
+  constraints:
+    min: 0

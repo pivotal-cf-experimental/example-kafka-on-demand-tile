@@ -1,0 +1,66 @@
+---
+name: example-kafka-on-demand
+label: On-Demand Kafka
+description: Kafka on-demand tile for example purposes
+
+metadata_version: "1.8"
+product_version: $( version )
+
+my_release_version: $( release "on-demand-service-broker" | select "version" )
+minimum_version_for_upgrade: 0.17.0
+
+# service_broker: true can be commented out to avoid bosh director redeployments on tile installation/deletion.
+# In that case make sure to hardcode everything that comes from $self below.
+service_broker: true
+
+provides_product_versions:
+- name: example-kafka-on-demand
+  version: $( version )
+
+requires_product_versions:
+- name: cf
+  version: ">= 1.10"
+
+icon_image: $( icon )
+
+rank: 90
+serial: false
+
+post_deploy_errands:
+- name: register-on-demand-broker
+  label: Register the broker
+  description: Register the broker against CF
+- name: upgrade-all-service-instances
+  label: Update All Service Instances
+  description: Upgrade all deployed service instances
+
+pre_delete_errands:
+- name: delete-all-service-instances-and-deregister-broker
+  label: Delete and deregister the broker
+  description: Delete all deployed service instances and deregister the broker
+
+releases:
+- $( release "on-demand-service-broker" )
+- $( release "kafka-example-service-adapter" )
+- $( release "kafka-example-service" )
+- $( release "consul" )
+
+stemcell_criteria: $( stemcell )
+
+property_blueprints:
+- $( property "secure-bindings" )
+
+form_types:
+- $( form "on-demand-broker" )
+- $( form "plan-1" )
+- $( form "plan-2" )
+- $( form "service-instances-upgrade" )
+
+job_types:
+- $( instance_group "broker" )
+- $( instance_group "register-on-demand-broker" )
+- $( instance_group "deregister-on-demand-broker" )
+- $( instance_group "orphan-deployments" )
+- $( instance_group "upgrade-all-service-instances" )
+- $( instance_group "delete-all-service-instances" )
+- $( instance_group "delete-all-service-instances-and-deregister-broker" )

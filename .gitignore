@@ -4,3 +4,4 @@
 *.pivotal.yml
 content_migrations/*.yml
 metadata/*.yml
+releases/*

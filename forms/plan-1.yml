@@ -1,0 +1,47 @@
+---
+name: plan-1
+label: On-demand plan 1
+description: Kafka on-demand plan 1
+property_inputs:
+- reference: .broker.plan_name_1
+  label: Plan name
+  description: Name of plan.
+- reference: .broker.plan_description_1
+  label: Plan description
+  description: Description of plan
+- reference: .broker.plan_instance_limit_1
+  label: Plan service instance limit
+  description: Maximum number of service instances of this plan that can be provisioned by the on-demand broker
+- reference: .broker.kafka_server_instances_1
+  label: Kafka server instances
+  description: No. of Kafka server instances
+- reference: .broker.kafka_server_vm_extensions_1
+  label: Kafka server VM options
+  description: List of VM options for Kafka server
+- reference: .broker.kafka_server_vm_type_1
+  label: Kafka server VM type
+  description: Type for Kafka server VM
+- reference: .broker.kafka_server_disk_type_1
+  label: Kafka server Disk type
+  description: Type for Kafka server disk
+- reference: .broker.kafka_az_multi_select_1
+  label: Kafka server availability zone(s)
+  description: Select one or more availability zones
+- reference: .broker.auto_create_topics_1
+  label: Auto-create topics
+  description: Create topics when not present
+- reference: .broker.default_replication_factor_1
+  label: Default replication factor
+  description: The Kafka server replication factor for a topic when not explicitly specified at topic creation time
+- reference: .broker.zookeeper_server_instances_1
+  label: Zookeeper server instances
+  description: No. of Zookeeper instances
+- reference: .broker.zookeeper_server_vm_type_1
+  label: Zookeeper VM type
+  description: Type for Zookeeper VMs
+- reference: .broker.zookeeper_server_disk_type_1
+  label: Zookeeper disk type
+  description: Type for Zookeeper disks
+- reference: .broker.zookeeper_az_multi_select_1
+  label: Zookeeper availability zone(s)
+  description: Select one or more availability zones

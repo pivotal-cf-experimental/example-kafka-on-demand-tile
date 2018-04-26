@@ -1,0 +1,98 @@
+---
+name: broker
+release: $( release "on-demand-service-broker" | select "name" )
+
+consumes: |
+  credhub: (( .properties.secure_bindings.selected_option.parsed_manifest(credhub_link) ))
+
+manifest: |
+  startup_banner: true
+  port: 8080
+  username: (( .broker.basic_auth.identity ))
+  password: (( .broker.basic_auth.password ))
+  enable_plan_schemas: (( .broker.enable_plan_schemas.value ))
+  disable_ssl_cert_verification: (( ..cf.ha_proxy.skip_cert_verify.value ))
+  secure_binding_credentials: (( .properties.secure_bindings.selected_option.parsed_manifest(secure_bindings_snippet) ))
+
+  bosh:
+    url: https://(( $director.hostname )):25555
+    root_ca_cert: (( $director.ca_public_key ))
+    authentication:
+      uaa:
+        url: https://(( $director.hostname )):8443
+        client_id: (( $self.uaa_client_name ))
+        client_secret: (( $self.uaa_client_secret ))
+
+  cf:
+    url: https://api.(( ..cf.cloud_controller.system_domain.value ))
+    authentication:
+      url: https://uaa.(( ..cf.cloud_controller.system_domain.value ))
+      user_credentials:
+        username: (( ..cf.uaa.system_services_credentials.identity ))
+        password: (( ..cf.uaa.system_services_credentials.password ))
+
+  service_deployment:
+    releases:
+    - name: $( release "kafka-example-service" | select "name" )
+      version: $( release "kafka-example-service" | select "version" )
+      jobs: [kafka_server, zookeeper_server]
+    stemcell:
+      os: ubuntu-trusty
+      version: (( $self.stemcell_version ))
+
+  service_catalog:
+    id: D94A086D-203D-4966-A6F1-60A9E2300F72
+    service_name: $(variable "odb-broker-name")
+    service_description: Kafka Service
+    bindable: true
+    plan_updatable: true
+    tags: [kafka]
+    global_quotas:
+      service_instance_limit: (( .broker.global_instance_limit.value ))
+
+    plans:
+    - name: (( .broker.plan_name_1.value ))
+      plan_id: (( .broker.plan_id_1.value ))
+      description: (( .broker.plan_description_1.value ))
+      quotas:
+        service_instance_limit: (( .broker.plan_instance_limit_1.value ))
+      instance_groups:
+      - name: kafka_server
+        vm_type: (( .broker.kafka_server_vm_type_1.value ))
+        vm_extensions: (( .broker.kafka_server_vm_extensions_1.value ))
+        instances: (( .broker.kafka_server_instances_1.value ))
+        persistent_disk: (( .broker.kafka_server_disk_type_1.value ))
+        networks: [(( $self.service_network ))]
+        azs: (( .broker.kafka_az_multi_select_1.value ))
+      - name: zookeeper_server
+        vm_type: (( .broker.zookeeper_server_vm_type_1.value ))
+        instances: (( .broker.zookeeper_server_instances_1.value ))
+        persistent_disk: (( .broker.zookeeper_server_disk_type_1.value ))
+        networks: [(( $self.service_network ))]
+        azs: (( .broker.zookeeper_az_multi_select_1.value ))
+      properties:
+        auto_create_topics: (( .broker.auto_create_topics_1.value ))
+        default_replication_factor: (( .broker.default_replication_factor_1.value ))
+
+    - name: (( .broker.plan_name_2.value ))
+      plan_id: (( .broker.plan_id_2.value ))
+      description: (( .broker.plan_description_2.value ))
+      quotas:
+        service_instance_limit: (( .broker.plan_instance_limit_2.value ))
+      instance_groups:
+      - name: kafka_server
+        vm_type: (( .broker.kafka_server_vm_type_2.value ))
+        vm_extensions: (( .broker.kafka_server_vm_extensions_2.value ))
+        instances: (( .broker.kafka_server_instances_2.value ))
+        persistent_disk: (( .broker.kafka_server_disk_type_2.value ))
+        networks: [(( $self.service_network ))]
+        azs: (( .broker.kafka_az_multi_select_2.value ))
+      - name: zookeeper_server
+        vm_type: (( .broker.zookeeper_server_vm_type_2.value ))
+        instances: (( .broker.zookeeper_server_instances_2.value ))
+        persistent_disk: (( .broker.zookeeper_server_disk_type_2.value ))
+        networks: [(( $self.service_network ))]
+        azs: (( .broker.zookeeper_az_multi_select_2.value ))
+      properties:
+        auto_create_topics: (( .broker.auto_create_topics_2.value ))
+        default_replication_factor: (( .broker.default_replication_factor_2.value ))

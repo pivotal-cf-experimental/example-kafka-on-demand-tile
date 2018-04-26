@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+
+set -eu
+
+cwd="$(cd "$(dirname "${0}")" && pwd)"
+VERSION="1.0.0"
+STEMCELL_VERSION="3541.12"
+WORKSPACE="${WORKSPACE:-"$HOME/workspace"}"
+RELEASES_DIR="$cwd/releases"
+SKIP_RELEASES_BUILDING=true
+ODB_DIR="$WORKSPACE/on-demand-service-broker-release"
+BUILD_RELEASES_FROM_SOURCE=true
+
+usage() {
+  cat <<EndOfUsage
+Usage: $0 [flags]
+
+Flags:
+  --tile-version, -v        Desired tile version. Ex: 1.0.0
+  --stemcell-version, -s    Target stemcell version. Ex: 3415.12
+  --releases-directory, -r  Optional. Path to a directory containing the necessary releases
+  --odb-release-dir,-d      Optional. Path to the ODB release directory. Defaults to "$ODB_DIR"
+  --help, -f                Show help
+EndOfUsage
+  exit 0
+}
+
+parse_opts() {
+  for arg in "$@"; do
+    shift
+    case "$arg" in
+      "--tile-version")       set -- "$@" "-v" ;;
+      "--stemcell-version")   set -- "$@" "-s" ;;
+      "--releases-directory") set -- "$@" "-r" ;;
+      "--odb-release-dir")    set -- "$@" "-d" ;;
+      "--help")               set -- "$@" "-h" ;;
+      *)                      set -- "$@" "$arg"
+    esac
+  done
+
+  OPTIND=1
+  while getopts "v:r:s:d:h" opt; do
+    case $opt in
+      v) VERSION="$OPTARG" ;;
+      r) RELEASES_DIR="$OPTARG"; BUILD_RELEASES_FROM_SOURCE=false ;;
+      s) STEMCELL_VERSION="$OPTARG" ;;
+      d) ODB_DIR="$OPTARG" ;;
+      h) usage ;;
+      *) exit 1 ;;
+    esac
+  done
+  shift $(( OPTIND - 1 ))
+}
+
+create_releases() {
+  rm releases/*
+
+  echo "Creating ODB release"
+  bosh create-release \
+    --name on-demand-service-broker \
+    --force \
+    --tarball "$cwd/releases/on-demand-service-broker.tgz" \
+    --dir="$ODB_DIR"
+
+  echo "Creating Kafka service adapter release"
+  bosh create-release \
+    --name  kafka-example-service-adapter \
+    --force \
+    --tarball "$cwd/releases/kafka-example-service-adapter.tgz" \
+    --dir="$ODB_DIR"
+
+  echo "Creating Kafka service release"
+  bosh create-release \
+    --name  kafka-example-service \
+    --force \
+    --tarball "$cwd/releases/kafka-example-service-.tgz" \
+    --dir="$ODB_DIR"
+
+  echo "Downloading Consul"
+  curl -L -s "https://github.com/cloudfoundry-community/consul-boshrelease/releases/download/v24.0.0/consul-24.0.0.tgz"\
+    -o "$cwd/releases/consul.tgz"
+}
+
+download_stemcell() {
+  echo "Downloading stemcell version $STEMCELL_VERSION"
+  rm -f "$cwd/stemcells/stemcell/tgz"
+  curl -L -s "https://s3.amazonaws.com/bosh-gce-light-stemcells/light-bosh-stemcell-$STEMCELL_VERSION-google-kvm-ubuntu-trusty-go_agent.tgz" \
+    -o "$cwd/stemcells/stemcell.tgz"
+}
+
+main() {
+  parse_opts "$@"
+
+  if ! type kiln >/dev/null 2>/dev/null; then
+    go get github.com/pivotal-cf/kiln
+  fi
+
+  if [[ ! -d "$ODB_DIR" ]]; then
+    echo "Cannot find on-demand-service-broker-release in $WORKSPACE"
+    exit 1
+  fi
+
+  download_stemcell
+
+  if $BUILD_RELEASES_FROM_SOURCE; then
+    create_releases
+  fi
+
+  kiln bake \
+    --version "$VERSION" \
+    --metadata "$cwd/base.yml" \
+    --releases-directory "$RELEASES_DIR" \
+    --stemcell-tarball "$cwd/stemcells/stemcell.tgz" \
+    --properties-directory "$cwd/properties" \
+    --migrations-directory "$cwd/migrations" \
+    --forms-directory "$cwd/forms" \
+    --instance-groups-directory "$cwd/instance-groups" \
+    --jobs-directory "$cwd/jobs" \
+    --icon "$cwd/icon.png" \
+    --variables-file "$cwd/variables.yml" \
+    --output-file "$cwd/example-kafka-odb-tile-$VERSION.pivotal"
+}
+
+main "$@"
+

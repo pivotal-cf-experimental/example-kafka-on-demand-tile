@@ -1,0 +1,11 @@
+---
+name: service-instances-upgrade
+label: Service instances upgrade
+description: Configuration for the upgrade-all-service-instances errand
+property_inputs:
+- reference: .upgrade_all_service_instances_on_demand_service_broker.max_in_flight
+  label: Number of simultaneous upgrades
+  description: The maximum number of service instances that will be in an upgrading state at the same time. This should be set to a maximum of 1 less than the BOSH worker count.
+- reference: .upgrade_all_service_instances_on_demand_service_broker.canaries
+  label: Number of upgrade canary instances
+  description: Number of service instances to upgrade first before going on to upgrade the rest of the instances.

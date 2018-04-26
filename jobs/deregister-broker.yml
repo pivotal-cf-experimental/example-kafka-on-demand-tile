@@ -1,0 +1,12 @@
+---
+name: deregister-broker
+release: $( release "on-demand-service-broker" | select "name" )
+
+manifest: |
+  broker_name: $(variable "odb-broker-name")
+  disable_ssl_cert_verification: (( ..cf.ha_proxy.skip_cert_verify.value ))
+  cf:
+    api_url: https://api.(( ..cf.cloud_controller.system_domain.value ))
+    admin_username: (( ..cf.uaa.system_services_credentials.identity ))
+    admin_password: (( ..cf.uaa.system_services_credentials.password ))
+

@@ -1,0 +1,5 @@
+---
+name: delete-all-service-instances-and-deregister-broker
+release: $(release "on-demand-service-broker" | select "name")
+manifest: |
+  broker_name: $(variable "odb-broker-name")

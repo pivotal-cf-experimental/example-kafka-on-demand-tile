@@ -1,0 +1,274 @@
+---
+name: broker
+resource_label: Kafka on-demand broker
+static_ip: 0
+dynamic_ip: 1
+max_in_flight: 1
+single_az_only: true
+
+instance_definition:
+  name: instances
+  type: integer
+  configurable: true
+  default: 1
+  constraints:
+    max: 1
+
+templates:
+- $( job "broker" )
+
+- name: kafka-service-adapter
+  release: $( release "kafka-example-service-adapter" | select "name" )
+
+- name: admin_tools
+  release: $( release "kafka-example-service" | select "name" )
+
+- name: consul_agent
+  release: $( release "consul" | select "name")
+  consumes: |
+    consul: nil
+    consul_server: nil
+    consul_common: { from: consul_common_link, deployment: "(( ..cf.deployment_name ))" }
+    consul_client: { from: consul_client_link, deployment: "(( ..cf.deployment_name ))" }
+
+resource_definitions:
+- name: ram
+  type: integer
+  configurable: true
+  default: 1024
+
+- name: ephemeral_disk
+  type: integer
+  configurable: true
+  default: 2048
+
+- name: persistent_disk
+  type: integer
+  configurable: true
+  default: 1024
+  constraints:
+    min: 1024
+
+- name: cpu
+  type: integer
+  configurable: true
+  default: 1
+
+property_blueprints:
+- name: enable_plan_schemas
+  type: boolean
+  configurable: true
+  default: true
+
+- name: global_instance_limit
+  type: integer
+  configurable: true
+  default: 500
+
+- name: basic_auth
+  type: simple_credentials
+  configurable: false
+
+- name: kafka_server_vm_extensions_1
+  type: multi_select_options
+  configurable: true
+  optional: true
+  options:
+  - name: "public_ip"
+    label: "Internet Connected VMs (on supported IaaS providers)"
+
+- name: plan_name_1
+  type: string
+  configurable: true
+
+- name: plan_id_1
+  type: uuid
+
+- name: plan_description_1
+  type: string
+  configurable: true
+
+- name: plan_instance_limit_1
+  type: integer
+  configurable: true
+  default: 500
+
+- name: kafka_server_instances_1
+  type: integer
+  configurable: true
+  default: 1
+
+- name: kafka_server_vm_type_1
+  type: vm_type_dropdown
+  configurable: true
+  resource_definitions:
+  - name: ram
+    default: 2048
+    constraints:
+      min: 2048
+      power_of_two: true
+  - name: ephemeral_disk
+    default: 8192
+  - name: cpu
+    default: 2
+
+- name: kafka_server_disk_type_1
+  type: disk_type_dropdown
+  configurable: true
+  resource_definitions:
+  - name: persistent_disk
+    default: 2048
+    constraints:
+      min: 2048
+      power_of_two: true
+
+- name: zookeeper_server_instances_1
+  type: integer
+  configurable: true
+  default: 1
+
+- name: zookeeper_server_vm_type_1
+  type: vm_type_dropdown
+  configurable: true
+  resource_definitions:
+  - name: ram
+    default: 2048
+    constraints:
+      min: 2048
+      power_of_two: true
+  - name: ephemeral_disk
+    default: 8192
+  - name: cpu
+    default: 2
+
+- name: zookeeper_server_disk_type_1
+  type: disk_type_dropdown
+  configurable: true
+  resource_definitions:
+  - name: persistent_disk
+    default: 2048
+    constraints:
+      min: 2048
+      power_of_two: true
+
+- name: auto_create_topics_1
+  type: boolean
+  configurable: true
+  default: true
+
+- name: default_replication_factor_1
+  type: integer
+  configurable: true
+  default: 1
+
+- name: kafka_az_multi_select_1
+  type: service_network_az_multi_select
+  configurable: true
+  optional: false
+
+- name: zookeeper_az_multi_select_1
+  type: service_network_az_multi_select
+  configurable: true
+  optional: false
+
+- name: kafka_server_vm_extensions_2
+  type: multi_select_options
+  configurable: true
+  optional: true
+  options:
+  - name: "public_ip"
+    label: "Internet Connected VMs (on supported IaaS providers)"
+
+- name: plan_name_2
+  type: string
+  configurable: true
+
+- name: plan_id_2
+  type: uuid
+
+- name: plan_description_2
+  type: string
+  configurable: true
+
+- name: plan_instance_limit_2
+  type: integer
+  configurable: true
+  default: 500
+
+- name: kafka_server_instances_2
+  type: integer
+  configurable: true
+  default: 1
+
+- name: kafka_server_vm_type_2
+  type: vm_type_dropdown
+  configurable: true
+  resource_definitions:
+  - name: ram
+    default: 2048
+    constraints:
+      min: 2048
+      power_of_two: true
+  - name: ephemeral_disk
+    default: 8192
+  - name: cpu
+    default: 2
+
+- name: kafka_server_disk_type_2
+  type: disk_type_dropdown
+  configurable: true
+  resource_definitions:
+  - name: persistent_disk
+    default: 2048
+    constraints:
+      min: 2048
+      power_of_two: true
+
+- name: zookeeper_server_instances_2
+  type: integer
+  configurable: true
+  default: 1
+
+- name: zookeeper_server_vm_type_2
+  type: vm_type_dropdown
+  configurable: true
+  resource_definitions:
+  - name: ram
+    default: 2048
+    constraints:
+      min: 2048
+      power_of_two: true
+  - name: ephemeral_disk
+    default: 8192
+  - name: cpu
+    default: 2
+
+- name: zookeeper_server_disk_type_2
+  type: disk_type_dropdown
+  configurable: true
+  resource_definitions:
+  - name: persistent_disk
+    default: 2048
+    constraints:
+      min: 2048
+      power_of_two: true
+
+- name: auto_create_topics_2
+  type: boolean
+  configurable: true
+  default: true
+
+- name: default_replication_factor_2
+  type: integer
+  configurable: true
+  default: 1
+
+- name: kafka_az_multi_select_2
+  type: service_network_az_multi_select
+  configurable: true
+  optional: false
+
+- name: zookeeper_az_multi_select_2
+  type: service_network_az_multi_select
+  configurable: true
+  optional: false

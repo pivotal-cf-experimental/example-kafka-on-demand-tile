@@ -1,0 +1,28 @@
+---
+name: secure-bindings
+type: selector
+configurable: true
+default: 'No'
+option_templates:
+- name: disabled
+  select_value: 'No'
+  named_manifests:
+  - name: credhub_link
+    manifest: ~
+  - name: secure_bindings_snippet
+    manifest: |
+      enabled: false
+- name: enabled
+  select_value: 'Yes'
+  named_manifests:
+  - name: credhub_link
+    manifest: |
+      {from: credhub, deployment: "(( ..cf.deployment_name ))"}
+  - name: secure_bindings_snippet
+    manifest: |
+      enabled: true
+      authentication:
+        uaa:
+          client_id: (( ..cf.uaa.services_credhub_credentials.identity ))
+          client_secret: (( ..cf.uaa.services_credhub_credentials.password ))
+          ca_cert: (( $ops_manager.ca_certificate ))
