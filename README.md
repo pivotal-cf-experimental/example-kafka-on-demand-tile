@@ -12,38 +12,35 @@ Documentation for this example can be found [here](https://docs.pivotal.io/svc-s
 
 ## Pre-requisites
 
-- Pivotal Cloud Foundry Operations Manager [v1.10](https://network.pivotal.io/products/ops-manager), or later
-- Pivotal Cloud Foundry Elastic Runtime [v1.10](https://network.pivotal.io/products/elastic-runtime), or later
-- Ruby [v2.2](https://www.ruby-lang.org/en/downloads/), or later
-- Vara [v0.22.0](https://rubygems.org/gems/vara), or later
+- Pivotal Cloud Foundry Operations Manager [v1.11](https://network.pivotal.io/products/ops-manager), or later
+- Pivotal Application Service (PAS) [v1.11](https://network.pivotal.io/products/elastic-runtime), or later
+- [Kiln](https://github.com/pivotal-cf/kiln)
 
-> NB: Elastic Runtime must be deployed before the Kafka on-demand tile is installed.
+> NB: PAS must be deployed before the Kafka on-demand tile is installed.
 
-## Build tile
+## Building the tile
 
-Clone the repository:
-
-```sh
-git clone git@github.com:pivotal-cf-experimental/example-kafka-on-demand-tile.git
-cd example-kafka-on-demand-tile
-```
-
-Download the on-demand service broker from the Pivotal Network:
-
-- Browse to https://network.pivotal.io/products/on-demand-services-sdk/
-- Download on-demand service broker v0.18.0
-- Save `on-demand-service-broker-0.18.0.tgz` in `example-kafka-on-demand-tile/releases`
-
-Build the tile:
-
-```
-bundle
-bundle exec vara build-pivotal .
-```
-
+- Clone this repository:
+  ```sh
+  $ git clone git@github.com:pivotal-cf-experimental/example-kafka-on-demand-tile.git
+  $ cd example-kafka-on-demand-tile
+  ```
+- Download the latest on-demand service broker from [Pivnet](https://network.pivotal.io/products/on-demand-services-sdk/)
+- Download the latest Consul release from [GitHub](https://github.com/cloudfoundry-incubator/consul-release/releases)
+- Download the latest [Kafka Service Adapter Release](https://s3.amazonaws.com/cf-services-internal-builds/kafka-example-service-adapter/kafka-example-service-adapter-0.18.0.tgz)
+ and [Kafka Service Release](https://s3.amazonaws.com/cf-services-internal-builds/kafka-service/kafka-example-service-0.18.0.tgz)
+   - Note: ensure to download all releases to the same directory
+- Build the tile
+  ```sh
+  $ ./bake \
+    --releases-directory /path/to/releases/dir \
+    --stemcell-version <target_stemcell> \
+    --tile-version 1.0.0
+  ```
+ 
 ## Use tile
 
-- Upload `example-kafka-on-demand-0.18.0.pivotal` to Pivotal Cloud Foundry Operations Manager.
+- Upload `example-kafka-on-demand-1.0.0.pivotal` to Pivotal Cloud Foundry Operations Manager.
 - Configure the tile.
 - Apply changes.
 
@@ -60,6 +57,7 @@ The Kafka service instances created with this tile may not behave correctly. How
 - [Kafka Example Sevice Adapter Release](https://github.com/pivotal-cf-experimental/kafka-example-service-adapter-release)
 - [Kafka Example Service Release](https://github.com/pivotal-cf-experimental/kafka-example-service-release)
 - [On Demand Service Broker Release](https://network.pivotal.io/products/on-demand-services-sdk/)
+- [Consul Release](https://github.com/cloudfoundry-incubator/consul-release/releases)
 
 ---
 
