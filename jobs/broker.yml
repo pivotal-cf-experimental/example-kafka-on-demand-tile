@@ -3,7 +3,7 @@ name: broker
 release: $( release "on-demand-service-broker" | select "name" )
 
 consumes: |
-  credhub: (( .properties.secure_bindings.selected_option.parsed_manifest(credhub_link) ))
+  credhub: (( .properties.secure-bindings.selected_option.parsed_manifest(credhub_link) ))
 
 manifest: |
   startup_banner: true
@@ -12,7 +12,7 @@ manifest: |
   password: (( .broker.basic_auth.password ))
   enable_plan_schemas: (( .broker.enable_plan_schemas.value ))
   disable_ssl_cert_verification: (( ..cf.ha_proxy.skip_cert_verify.value ))
-  secure_binding_credentials: (( .properties.secure_bindings.selected_option.parsed_manifest(secure_bindings_snippet) ))
+  secure_binding_credentials: (( .properties.secure-bindings.selected_option.parsed_manifest(secure_bindings_snippet) ))
 
   bosh:
     url: https://(( $director.hostname )):25555

@@ -9,11 +9,11 @@ property_inputs:
 - reference: .broker.global_instance_limit
   label: Global service instance limit
   description: Maximum number of service instances that can be provisioned by the on-demand broker
-- reference: .properties.secure_bindings
+- reference: .properties.secure-bindings
   label: Enable Secure Bindings
   description: Requires CredHub enabled on PAS
   selector_property_inputs:
-  - reference: ".properties.secure_bindings.disabled"
+  - reference: ".properties.secure-bindings.disabled"
     label: 'No'
-  - reference: ".properties.secure_bindings.enabled"
+  - reference: ".properties.secure-bindings.enabled"
     label: 'Yes'

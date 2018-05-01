@@ -28,15 +28,12 @@ serial: false
 
 post_deploy_errands:
 - name: register-on-demand-broker
-  label: Register the broker
   description: Register the broker against CF
 - name: upgrade-all-service-instances
-  label: Update All Service Instances
   description: Upgrade all deployed service instances
 
 pre_delete_errands:
 - name: delete-all-service-instances-and-deregister-broker
-  label: Delete and deregister the broker
   description: Delete all deployed service instances and deregister the broker
 
 releases:

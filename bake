@@ -67,17 +67,17 @@ create_releases() {
     --name  kafka-example-service-adapter \
     --force \
     --tarball "$cwd/releases/kafka-example-service-adapter.tgz" \
-    --dir="$ODB_DIR"
+    --dir="$ODB_DIR/examples/kafka-example-service-adapter-release"
 
   echo "Creating Kafka service release"
   bosh create-release \
     --name  kafka-example-service \
     --force \
-    --tarball "$cwd/releases/kafka-example-service-.tgz" \
-    --dir="$ODB_DIR"
+    --tarball "$cwd/releases/kafka-example-service.tgz" \
+    --dir="$ODB_DIR/examples/kafka-example-service-release"
 
   echo "Downloading Consul"
-  curl -L -s "https://github.com/cloudfoundry-community/consul-boshrelease/releases/download/v24.0.0/consul-24.0.0.tgz"\
+  curl -L -s "https://bosh.io/d/github.com/cloudfoundry-incubator/consul-release?v=192"\
     -o "$cwd/releases/consul.tgz"
 }
 
