@@ -46,6 +46,7 @@ stemcell_criteria: $( stemcell )
 
 property_blueprints:
 - $( property "secure-bindings" )
+- $( property "resolve_secrets_at_bind" )
 
 form_types:
 - $( form "on-demand-broker" )

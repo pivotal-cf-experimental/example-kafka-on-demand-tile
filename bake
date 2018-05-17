@@ -53,7 +53,7 @@ parse_opts() {
 }
 
 create_releases() {
-  rm releases/*
+  rm -f releases/*
 
   echo "Creating ODB release"
   bosh create-release \

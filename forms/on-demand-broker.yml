@@ -17,3 +17,11 @@ property_inputs:
     label: 'No'
   - reference: ".properties.secure-bindings.enabled"
     label: 'Yes'
+- reference: .properties.resolve_secrets_at_bind
+  label: Resolve secrets at binding time
+  description: If set to true, the broker will resolve secrets using CredHub
+  selector_property_inputs:
+  - reference: ".properties.resolve_secrets_at_bind.disabled"
+    label: 'No'
+  - reference: ".properties.resolve_secrets_at_bind.enabled"
+    label: 'Yes'
