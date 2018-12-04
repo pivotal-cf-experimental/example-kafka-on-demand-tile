@@ -5,3 +5,4 @@
 content_migrations/*.yml
 metadata/*.yml
 releases/*
+.DS_Store
