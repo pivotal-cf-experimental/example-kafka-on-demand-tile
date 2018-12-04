@@ -2,13 +2,13 @@
 name: secure-bindings
 type: selector
 configurable: true
-default: 'No'
+default: 'Yes'
 option_templates:
 - name: disabled
   select_value: 'No'
   named_manifests:
   - name: credhub_link
-    manifest: ~
+    manifest: 'nil'
   - name: secure_bindings_snippet
     manifest: |
       enabled: false

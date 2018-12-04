@@ -31,6 +31,8 @@ post_deploy_errands:
   description: Register the broker against CF
 - name: upgrade-all-service-instances
   description: Upgrade all deployed service instances
+- name: recreate-all-service-instances
+  description: Recreate all deployed service instances
 
 pre_delete_errands:
 - name: delete-all-service-instances-and-deregister-broker
@@ -62,3 +64,4 @@ job_types:
 - $( instance_group "upgrade-all-service-instances" )
 - $( instance_group "delete-all-service-instances" )
 - $( instance_group "delete-all-service-instances-and-deregister-broker" )
+- $( instance_group "recreate-all-service-instances" )

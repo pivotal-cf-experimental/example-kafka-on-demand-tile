@@ -80,6 +80,7 @@ property_blueprints:
 - name: plan_name_1
   type: string
   configurable: true
+  default: 'Plan 1'
 
 - name: plan_id_1
   type: uuid
@@ -87,6 +88,7 @@ property_blueprints:
 - name: plan_description_1
   type: string
   configurable: true
+  default: 'Plan 1 description'
 
 - name: plan_instance_limit_1
   type: integer
@@ -182,6 +184,7 @@ property_blueprints:
 - name: plan_name_2
   type: string
   configurable: true
+  default: 'Plan 2'
 
 - name: plan_id_2
   type: uuid
@@ -189,6 +192,7 @@ property_blueprints:
 - name: plan_description_2
   type: string
   configurable: true
+  default: 'Plan 2 description'
 
 - name: plan_instance_limit_2
   type: integer
