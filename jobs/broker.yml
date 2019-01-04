@@ -39,7 +39,7 @@ manifest: |
       version: $( release "kafka-example-service" | select "version" )
       jobs: [kafka_server, zookeeper_server]
     stemcell:
-      os: ubuntu-trusty
+      os: ubuntu-xenial
       version: (( $self.stemcell_version ))
 
   service_catalog:

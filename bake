@@ -4,7 +4,7 @@ set -eu
 
 cwd="$(cd "$(dirname "${0}")" && pwd)"
 VERSION="1.0.0"
-STEMCELL_VERSION="3541.12"
+STEMCELL_VERSION="170.16"
 WORKSPACE="${WORKSPACE:-"$HOME/workspace"}"
 RELEASES_DIR="$cwd/releases"
 SKIP_RELEASES_BUILDING=true
@@ -84,7 +84,7 @@ create_releases() {
 download_stemcell() {
   echo "Downloading stemcell version $STEMCELL_VERSION"
   rm -f "$cwd/stemcells/stemcell/tgz"
-  curl -L -s "https://s3.amazonaws.com/bosh-gce-light-stemcells/light-bosh-stemcell-$STEMCELL_VERSION-google-kvm-ubuntu-trusty-go_agent.tgz" \
+  curl -L -s "https://s3.amazonaws.com/bosh-gce-light-stemcells/light-bosh-stemcell-$STEMCELL_VERSION-google-kvm-ubuntu-xenial-go_agent.tgz" \
     -o "$cwd/stemcells/stemcell.tgz"
 }
 
@@ -122,4 +122,3 @@ main() {
 }
 
 main "$@"
-
