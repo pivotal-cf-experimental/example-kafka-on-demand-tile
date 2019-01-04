@@ -29,9 +29,9 @@ manifest: |
     url: https://api.(( ..cf.cloud_controller.system_domain.value ))
     authentication:
       url: https://uaa.(( ..cf.cloud_controller.system_domain.value ))
-      user_credentials:
-        username: (( ..cf.uaa.system_services_credentials.identity ))
-        password: (( ..cf.uaa.system_services_credentials.password ))
+      client_credentials:
+        client_id: (( ..cf.uaa.tile_installer_client_credentials.identity ))
+        secret: (( ..cf.uaa.tile_installer_client_credentials.password ))
 
   service_deployment:
     releases:

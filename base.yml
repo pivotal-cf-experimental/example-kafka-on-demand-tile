@@ -19,7 +19,7 @@ provides_product_versions:
 
 requires_product_versions:
 - name: cf
-  version: ">= 1.10"
+  version: ">= 2.4"
 
 icon_image: $( icon )
 
