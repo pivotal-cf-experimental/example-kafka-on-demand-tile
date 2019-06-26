@@ -2,5 +2,5 @@
 name: upgrade-all-service-instances
 release: $( release "on-demand-service-broker" | select "name" )
 manifest: |
-  max_in_flight: (( .upgrade-all-service-instances.max_in_flight.value ))
-  canaries: (( .upgrade-all-service-instances.canaries.value ))
+  max_in_flight: (( .broker.max_in_flight.value ))
+  canaries: (( .broker.canaries.value ))

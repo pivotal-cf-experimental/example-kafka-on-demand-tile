@@ -79,6 +79,10 @@ create_releases() {
   echo "Downloading Consul"
   curl -L -s "https://bosh.io/d/github.com/cloudfoundry-incubator/consul-release?v=192"\
     -o "$cwd/releases/consul.tgz"
+
+  echo "Downlading BPM"
+  curl -L -s "https://github.com/cloudfoundry/bpm-release/releases/download/v1.1.0/bpm-release-1.1.0.tgz" \
+    -o "$cwd/releases/bpm.tgz"
 }
 
 download_stemcell() {

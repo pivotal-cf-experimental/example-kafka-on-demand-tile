@@ -27,20 +27,58 @@ rank: 90
 serial: false
 
 post_deploy_errands:
-- name: register-on-demand-broker
-  description: Register the broker against CF
+- name: register-broker
+  colocated: true
+  label: Register On Demand Service Broker
+  instances: [broker/first]
+
 - name: upgrade-all-service-instances
+  colocated: true
+  label: Upgrade All Service Instances
   description: Upgrade all deployed service instances
+  instances: [broker/first]
+
+- name: recreate-all-service-instances
+  colocated: true
+  run_default: false
+  label: Recreate All Service Instances
+  description: Recreate all deployed service instances
+  instances: [broker/first]
+
+- name: orphan-deployments
+  colocated: true
+  run_default: false
+  label: Orphan Deployments
+  description: Detect orphan deployment instances
+  instances: [broker/first]
 
 pre_delete_errands:
 - name: delete-all-service-instances-and-deregister-broker
+  label: Delete All Service Instances and Deregister Broker
   description: Delete all deployed service instances and deregister the broker
+  colocated: true
+  instances: [broker/first]
+
+- name: delete-all-service-instances
+  label: Delete All Service Instances
+  description: Delete all deployed service instances
+  colocated: true
+  run_default: false
+  instances: [broker/first]
+
+- name: deregister-broker
+  label: Deregister Broker
+  description: Deregister the broker
+  colocated: true
+  run_default: false
+  instances: [broker/first]
 
 releases:
 - $( release "on-demand-service-broker" )
 - $( release "kafka-example-service-adapter" )
 - $( release "kafka-example-service" )
 - $( release "consul" )
+- $( release "bpm" )
 
 stemcell_criteria: $( stemcell )
 
@@ -56,10 +94,3 @@ form_types:
 
 job_types:
 - $( instance_group "broker" )
-- $( instance_group "register-on-demand-broker" )
-- $( instance_group "deregister-on-demand-broker" )
-- $( instance_group "orphan-deployments" )
-- $( instance_group "upgrade-all-service-instances" )
-- $( instance_group "delete-all-service-instances" )
-- $( instance_group "delete-all-service-instances-and-deregister-broker" )
-- $( instance_group "recreate-all-service-instances" )

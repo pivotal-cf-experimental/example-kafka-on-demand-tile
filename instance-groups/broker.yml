@@ -16,6 +16,22 @@ instance_definition:
 
 templates:
 - $( job "broker" )
+- $( job "register-broker" )
+- $( job "deregister-broker" )
+- $( job "upgrade-all-service-instances" )
+- $( job "delete-all-service-instances-and-deregister-broker" )
+
+- name: orphan-deployments
+  release: $( release "on-demand-service-broker" | select "name" )
+
+- name: recreate-all-service-instances
+  release: $( release "on-demand-service-broker" | select "name" )
+
+- name: delete-all-service-instances
+  release: $( release "on-demand-service-broker" | select "name" )
+
+- name: bpm
+  release: $( release "bpm" | select "name" )
 
 - name: kafka-service-adapter
   release: $( release "kafka-example-service-adapter" | select "name" )
@@ -276,3 +292,17 @@ property_blueprints:
   type: service_network_az_multi_select
   configurable: true
   optional: false
+
+- name: max_in_flight
+  type: integer
+  default: 1
+  configurable: true
+  constraints:
+    min: 1
+
+- name: canaries
+  type: integer
+  default: 0
+  configurable: true
+  constraints:
+    min: 0
