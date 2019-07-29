@@ -13,7 +13,7 @@ manifest: |
   enable_plan_schemas: (( .broker.enable_plan_schemas.value ))
   disable_ssl_cert_verification: (( ..cf.ha_proxy.skip_cert_verify.value ))
   secure_binding_credentials: (( .properties.secure-bindings.selected_option.parsed_manifest(secure_bindings_snippet) ))
-  resolve_manifest_secrets_at_bind: (( .properties.resolve_secrets_at_bind.selected_option.parsed_manifest(resolve_secrets_at_bind_flag) ))
+  enable_secure_manifests: (( .properties.resolve_secrets_at_bind.selected_option.parsed_manifest(resolve_secrets_at_bind_flag) ))
   bosh_credhub_api: (( .properties.resolve_secrets_at_bind.selected_option.parsed_manifest(bosh_credhub_api_snippet) ))
 
   bosh:
